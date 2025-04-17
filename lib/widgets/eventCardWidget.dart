@@ -21,7 +21,12 @@ class EventCardWidget extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: (){},
-                child: CircleAvatar(backgroundImage: AssetImage(event.createdBy.profilePhotoPath), radius: 25,),
+                child: CircleAvatar(
+                  radius: 25,
+                  backgroundImage: event.createdBy.profilePhotoPath.startsWith('http')
+                      ? NetworkImage(event.createdBy.profilePhotoPath)
+                      : AssetImage(event.createdBy.profilePhotoPath) as ImageProvider,
+                ),
               ),
               SizedBox(width: 5,),
               Text(

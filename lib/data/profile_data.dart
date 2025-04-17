@@ -29,6 +29,6 @@ final List<Profile> profiles = [
     name: "Mert",
     surname: "Aslan",
     hasEvent: false,
-    profilePhotoPath: "assets/profile_photos/1724950492844.jpg",
+    profilePhotoPath: "https://media.licdn.com/dms/image/v2/D4D03AQGvnrxP1zWDRA/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1724950492844?e=1750291200&v=beta&t=x7BBW-_fXvPoolZVsC-bLpe3ZqJwQgJkgzm85BjVbfY",
   ),
 ];

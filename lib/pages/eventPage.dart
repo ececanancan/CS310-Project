@@ -6,6 +6,7 @@ import 'package:cs_projesi/data/event_data.dart';
 import 'package:cs_projesi/widgets/eventCardWidget.dart';
 import 'package:cs_projesi/widgets/storyBarWidget.dart';
 import 'package:cs_projesi/widgets/navigationBarWidget.dart';
+import 'package:cs_projesi/utility_classes/eventPage_utility.dart';
 
 class EventPage extends StatefulWidget {
   final Event event;
@@ -141,11 +142,11 @@ class _EventPageState extends State<EventPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            infoTile("", event.descriptionLarge,),
-                            infoTile("When:", event.when),
-                            infoTile("Where:", event.bring),
-                            infoTile("What to bring:", event.bring),
-                            infoTile("Goal:", event.goal),
+                            EventPageUtility.infoTile("", event.descriptionLarge,),
+                            EventPageUtility.infoTile("When:", event.when),
+                            EventPageUtility.infoTile("Where:", event.bring),
+                            EventPageUtility.infoTile("What to bring:", event.bring),
+                            EventPageUtility.infoTile("Goal:", event.goal),
                           ],
                         ),
                       ),
@@ -232,35 +233,4 @@ class _EventPageState extends State<EventPage> {
 
   }
 }
-Widget infoTile(String title, String content) {
-  return Padding(
-    padding: const EdgeInsets.only(bottom: 12),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: TextStyle(
-            fontFamily: 'RobotoSerif',
-            fontSize: 21,
-            color: Colors.black,
-            letterSpacing: -0.7,
-            fontWeight: FontWeight.w900,
-          ),
-        ),
-        Text(
-          content,
-          style: TextStyle(
-            fontFamily: 'RobotoSerif',
-            fontSize: 20,
-            color: Colors.black87,
-            letterSpacing: -0.7,
-            fontWeight: FontWeight.w500,
-            height: 1.1,
-          ),
-        ),
-        SizedBox(height: 1),
-      ],
-    ),
-  );
-}
+

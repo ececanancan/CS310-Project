@@ -45,8 +45,10 @@ class StoryBarWidget extends StatelessWidget {
                             : Border.all(color: Colors.white, width: 3),
                       ),
                       child: CircleAvatar(
-                        backgroundImage: AssetImage(profile.profilePhotoPath),
                         radius: 35,
+                        backgroundImage: profile.profilePhotoPath.startsWith('http')
+                            ? NetworkImage(profile.profilePhotoPath)
+                            : AssetImage(profile.profilePhotoPath) as ImageProvider,
                       ),
                     ),
                   ),
