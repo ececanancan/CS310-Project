@@ -65,7 +65,7 @@ class EventCardWidget extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 4,),
+          SizedBox(height: 10,),
           GestureDetector(
             onTap: () {
               Navigator.pushNamed(
