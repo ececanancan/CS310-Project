@@ -7,13 +7,11 @@ import 'package:cs_projesi/utility_classes/app_colors.dart';
 class ProfilePage extends StatefulWidget {
   final UserProfile user;
   final int selectedIndex;
-  final Function(int) onItemTapped;
 
   const ProfilePage({
     Key? key,
     required this.user,
     required this.selectedIndex,
-    required this.onItemTapped,
   }) : super(key: key);
 
   @override
