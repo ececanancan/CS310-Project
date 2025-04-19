@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cs_projesi/models/event.dart';
+import 'package:cs_projesi/data/UserProfile_data.dart';
+import 'package:cs_projesi/pages/ProfilePage.dart';
 
 class EventCardWidget extends StatelessWidget {
   final Event event;
@@ -20,7 +22,28 @@ class EventCardWidget extends StatelessWidget {
           Row(
             children: [
               GestureDetector(
-                onTap: (){},
+                onTap: () {
+                  try {
+                    final matchingProfile = profs.firstWhere(
+                          (profile) => profile.name == event.createdBy.name,
+                    );
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfilePage(
+                          user: matchingProfile,
+                          selectedIndex: 2,
+                          onItemTapped: (int index) {},
+                        ),
+                      ),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Profile not found.')),
+                    );
+                  }
+                },
                 child: CircleAvatar(
                   radius: 25,
                   backgroundImage: event.createdBy.profilePhotoPath.startsWith('http')
