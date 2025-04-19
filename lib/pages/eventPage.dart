@@ -7,6 +7,7 @@ import 'package:cs_projesi/widgets/eventCardWidget.dart';
 import 'package:cs_projesi/widgets/storyBarWidget.dart';
 import 'package:cs_projesi/widgets/navigationBarWidget.dart';
 import 'package:cs_projesi/utility_classes/eventPage_utility.dart';
+import 'package:cs_projesi/utility_classes/app_colors.dart';
 
 class EventPage extends StatefulWidget {
   final Event event;
@@ -23,7 +24,7 @@ class _EventPageState extends State<EventPage> {
 
   static const List<String> _routes = [
     '/SettingPage',
-    'ProfilePage',
+    '/ProfilePage',
     '/HomePage',
     '/MapPage',
     '/QuestionMarkPage',
@@ -170,8 +171,8 @@ class _EventPageState extends State<EventPage> {
                             alignment: Alignment.center,
                             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
                             decoration: BoxDecoration(
-                              color: _isRequested ? Color(0xFF67C933).withOpacity(0.5) : Colors.white,
-                              border: Border.all(color: Color(0xFF67C933), width: 3),
+                              color: _isRequested ? AppColors.green.withOpacity(0.5) : Colors.white,
+                              border: Border.all(color: AppColors.green, width: 3),
                               borderRadius: BorderRadius.circular(50),
                             ),
                             child: Text(
@@ -200,7 +201,7 @@ class _EventPageState extends State<EventPage> {
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              border: Border.all(color: Color(0xFF67C933), width: 3),
+                              border: Border.all(color: AppColors.green, width: 3),
                               borderRadius: BorderRadius.circular(50),
                             ),
                             child: Text(

@@ -2,8 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:cs_projesi/widgets/navigationBarWidget.dart';
 
 
-class QuestionMarkPage extends StatelessWidget {
+class QuestionMarkPage extends StatefulWidget {
   const QuestionMarkPage({super.key});
+
+  @override
+  _QuestionMarkPageState createState() => _QuestionMarkPageState();
+}
+
+class _QuestionMarkPageState extends State<QuestionMarkPage> {
+
+  int _selectedIndex = 4;
+
+  static const List<String> _routes = [
+    '/SettingPage',
+    '/ProfilePage',
+    '/HomePage',
+    '/MapPage',
+    '/QuestionMarkPage',
+  ];
+
+  void _onItemTapped(int index) {
+    if (index != _selectedIndex) {
+      Navigator.pushNamed(context, _routes[index]);
+    }
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,26 +144,8 @@ class QuestionMarkPage extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: NavigationBarNature(
-        selectedIndex: 4,
-        onItemTapped: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, '/SettingsPage');
-              break;
-            case 1:
-              Navigator.pushNamed(context, '/ProfilePage');
-              break;
-            case 2:
-              Navigator.pushNamed(context, '/HomePage');
-              break;
-            case 3:
-              Navigator.pushNamed(context, '/EventPage');
-              break;
-            case 4:
-              Navigator.pushNamed(context, '/QuestionMarkPage');
-              break;
-          }
-        },
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
       ),
 
     );

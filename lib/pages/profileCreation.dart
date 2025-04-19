@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:cs_projesi/utility_classes/app_colors.dart';
+
 
 class ProfileCreationPage extends StatefulWidget {
   @override
@@ -47,10 +49,10 @@ class _ProfileCreationPageState extends State<ProfileCreationPage> {
   InputDecoration _greenBorderDecoration() {
     return InputDecoration(
       enabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Color(0xFF67c933), width: 1.5),
+        borderSide: BorderSide(color: AppColors.green, width: 1.5),
       ),
       focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Color(0xFF67c933), width: 2.0),
+        borderSide: BorderSide(color: AppColors.green, width: 2.0),
       ),
     );
   }
@@ -134,13 +136,13 @@ class _ProfileCreationPageState extends State<ProfileCreationPage> {
               'Cancel',
               style: TextStyle(
                 fontFamily: 'RobotoSerif',
-                color: Color(0xFF67c933),
+                color: AppColors.green,
               ),
             ),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFF67c933),
+              backgroundColor: AppColors.green,
             ),
             onPressed: () {
               if (_customController.text.trim().isNotEmpty) {
@@ -292,7 +294,7 @@ class _ProfileCreationPageState extends State<ProfileCreationPage> {
                                   'Select an Activity',
                                 ),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xFF67c933),
+                                  backgroundColor: AppColors.green,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   ),
@@ -307,7 +309,7 @@ class _ProfileCreationPageState extends State<ProfileCreationPage> {
                                 child: Text(
                                   'Add Custom Activity',
                                   style: TextStyle(
-                                    color: Color(0xFF67c933),
+                                    color: AppColors.green,
                                     fontWeight: FontWeight.w500,
                                     fontFamily: 'RobotoSerif',
                                   ),
@@ -367,7 +369,7 @@ class _ProfileCreationPageState extends State<ProfileCreationPage> {
                                   'Select a Place',
                                 ),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xFF67c933),
+                                  backgroundColor: AppColors.green,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   ),
@@ -381,7 +383,7 @@ class _ProfileCreationPageState extends State<ProfileCreationPage> {
                                 child: Text(
                                   'Add Custom Place',
                                   style: TextStyle(
-                                    color: Color(0xFF67c933),
+                                    color: AppColors.green,
                                     fontWeight: FontWeight.w500,
                                     fontFamily: 'RobotoSerif',
                                   ),
@@ -408,9 +410,9 @@ class _ProfileCreationPageState extends State<ProfileCreationPage> {
                           backgroundColor: MaterialStateProperty.resolveWith<Color>(
                                 (states) {
                               if (states.contains(MaterialState.disabled)) {
-                                return Color(0xFFb2e398); // Pale green when disabled
+                                return AppColors.paleGreen; // Pale green when disabled
                               }
-                              return Color(0xFF67c933); // Green when enabled
+                              return AppColors.green; // Green when enabled
                             },
                           ),
                           padding: MaterialStateProperty.all(
@@ -465,7 +467,7 @@ class AdditionalProfilePrompt extends StatelessWidget {
                 children: [
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF67c933),
+                      backgroundColor: AppColors.green,
                       shape: StadiumBorder(),
                       padding:
                       EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -478,7 +480,7 @@ class AdditionalProfilePrompt extends StatelessWidget {
                   SizedBox(width: 20),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF67c933),
+                      backgroundColor: AppColors.green,
                       shape: StadiumBorder(),
                       padding:
                       EdgeInsets.symmetric(horizontal: 24, vertical: 12),

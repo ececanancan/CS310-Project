@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> {
 
   static const List<String> _routes = [
     '/SettingPage',
-    'ProfilePage',
+    '/ProfilePage',
     '/HomePage',
     '/MapPage',
     '/QuestionMarkPage',
