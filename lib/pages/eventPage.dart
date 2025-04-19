@@ -22,20 +22,6 @@ class _EventPageState extends State<EventPage> {
   int _selectedIndex = 2;
   bool _isRequested = false;
 
-  static const List<String> _routes = [
-    '/SettingPage',
-    '/ProfilePage',
-    '/HomePage',
-    '/MapPage',
-    '/QuestionMarkPage',
-  ];
-
-  void _onItemTapped(int index) {
-    Navigator.pushReplacementNamed(context, _routes[index]);
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {

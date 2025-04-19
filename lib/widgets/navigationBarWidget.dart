@@ -17,9 +17,7 @@ class NavigationBarNature extends StatelessWidget {
   ];
 
   void _onItemTapped(BuildContext context, int index) {
-    if (index != selectedIndex) {
-      Navigator.pushNamed(context, _routes[index]);
-    }
+    Navigator.pushNamed(context, _routes[index]);
   }
 
   @override

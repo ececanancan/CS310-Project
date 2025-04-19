@@ -18,22 +18,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 2;
 
-  static const List<String> _routes = [
-    '/SettingPage',
-    '/ProfilePage',
-    '/HomePage',
-    '/MapPage',
-    '/QuestionMarkPage',
-  ];
 
-  void _onItemTapped(int index) {
-    if (index != _selectedIndex) {
-      Navigator.pushNamed(context, _routes[index]);
-    }
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context){
