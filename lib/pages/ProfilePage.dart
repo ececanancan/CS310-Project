@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cs_projesi/pages/UserProfile.dart';
+import 'package:cs_projesi/models/UserProfile.dart';
 import 'package:cs_projesi/widgets/navigationBarWidget.dart';
 import 'package:cs_projesi/data/profile_data.dart';
 import 'package:cs_projesi/utility_classes/app_colors.dart';
