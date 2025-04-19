@@ -1,4 +1,4 @@
-import 'UserProfile.dart'; // where you define the UserProfile class
+import 'package:cs_projesi/models/UserProfile.dart';
 
 
 List<String> parseFavorites(String input) {
