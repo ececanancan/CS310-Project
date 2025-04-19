@@ -42,11 +42,11 @@ final List<UserProfile> profs = [
     '''),
   ),
   UserProfile(
-    name: 'Kenan',
+    name: 'Demir',
     age: 28,
-    imagePath: 'assets/images/liam.png',
+    imagePath: 'assets/profile_photos/demir.jpg',
     description:
-    'Hi, I’m Kenan a nature enthusiast passionate about preserving '
+    'Hi, I’m Demir a nature enthusiast passionate about preserving '
         'and protecting our natural environment. I believe that small actions'
         ' can make a big difference, whether it’s organizing clean-ups or '
         'enjoying water-based activities. Exploring lakes, forests, deserts, and '
