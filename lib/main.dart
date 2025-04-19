@@ -8,15 +8,20 @@ import 'package:cs_projesi/widgets/storyBarWidget.dart';
 import 'package:cs_projesi/widgets/navigationBarWidget.dart';
 import 'package:cs_projesi/pages/homePage.dart';
 import 'package:cs_projesi/pages/eventPage.dart';
+import 'package:cs_projesi/pages/profileCreation.dart';
+import 'package:cs_projesi/pages/questionMarkPage.dart';
+
 
 //main function to run the app
 void main(){
   runApp(MaterialApp(
       title: 'NatureSync',
-      initialRoute: '/HomePage',
+      initialRoute: '/',
       routes: {
+        '/': (context) => ProfileCreationPage(),
         '/HomePage': (context) => HomePage(),
         '/EventPage': (context) => EventPage(event: ModalRoute.of(context)!.settings.arguments as Event),
+        '/QuestionMarkPage': (context) => const QuestionMarkPage(),
       }
   ));
 }
