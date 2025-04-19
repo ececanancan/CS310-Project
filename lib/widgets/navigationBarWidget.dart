@@ -9,7 +9,7 @@ class NavigationBarNature extends StatelessWidget {
   }) : super(key: key);
 
   static const List<String> _routes = [
-    '/SettingPage',
+    '/SettingsPage',
     '/ProfilePage',
     '/HomePage',
     '/MapPage',
