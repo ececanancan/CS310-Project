@@ -26,7 +26,6 @@ void main(){
         '/': (context) => ProfileCreationPage(),
         '/HomePage': (context) => HomePage(),
         '/EventPage': (context) => EventPage(event: ModalRoute.of(context)!.settings.arguments as Event),
-        '/ProfilePage': (context) => const ProfilePage(),
         '/SettingsPage': (context) => const SettingsPage(),
         '/QuestionMarkPage': (context) => const QuestionMarkPage(),
       }
