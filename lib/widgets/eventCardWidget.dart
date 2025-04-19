@@ -34,7 +34,6 @@ class EventCardWidget extends StatelessWidget {
                         builder: (context) => ProfilePage(
                           user: matchingProfile,
                           selectedIndex: 2,
-                          onItemTapped: (int index) {},
                         ),
                       ),
                     );
