@@ -3,13 +3,8 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:cs_projesi/widgets/navigationBarWidget.dart';
 
 class SettingsPage extends StatelessWidget {
-  final int selectedIndex;
-  final Function(int) onItemTapped;
-
   const SettingsPage({
     Key? key,
-    required this.selectedIndex,
-    required this.onItemTapped,
   }) : super(key: key);
 
   Widget _buildTile(IconData icon, String label, VoidCallback onTap) {
@@ -39,6 +34,8 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int _selectedIndex = 0;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Settings"),
@@ -64,7 +61,7 @@ class SettingsPage extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: NavigationBarNature(
-        selectedIndex: selectedIndex,
+        selectedIndex: _selectedIndex,
 
       ),
     );

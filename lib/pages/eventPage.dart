@@ -96,7 +96,6 @@ class _EventPageState extends State<EventPage> {
                               MaterialPageRoute(
                                 builder: (context) => ProfilePage(
                                   user: matchingProfile,
-                                  selectedIndex: 2,
                                 ),
                               ),
                             );

@@ -33,7 +33,6 @@ class EventCardWidget extends StatelessWidget {
                       MaterialPageRoute(
                         builder: (context) => ProfilePage(
                           user: matchingProfile,
-                          selectedIndex: 2,
                         ),
                       ),
                     );

@@ -6,12 +6,10 @@ import 'package:cs_projesi/utility_classes/app_colors.dart';
 
 class ProfilePage extends StatefulWidget {
   final UserProfile user;
-  final int selectedIndex;
 
   const ProfilePage({
     Key? key,
     required this.user,
-    required this.selectedIndex,
   }) : super(key: key);
 
   @override
@@ -21,6 +19,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
 
   late bool isFollowing;
+  int _selectedIndex = 2;
 
   @override
   void initState() {
@@ -166,7 +165,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ),
       bottomNavigationBar: NavigationBarNature(
-        selectedIndex: widget.selectedIndex,
+        selectedIndex: _selectedIndex,
 
       ),
     );

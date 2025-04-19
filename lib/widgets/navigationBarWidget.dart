@@ -9,7 +9,7 @@ class NavigationBarNature extends StatelessWidget {
   }) : super(key: key);
 
   static const List<String> _routes = [
-    '/SettingPage',
+    '/SettingsPage',
     '/ProfilePage',
     '/HomePage',
     '/MapPage',
@@ -59,8 +59,8 @@ class NavigationBarNature extends StatelessWidget {
     return BottomNavigationBarItem(
       icon: Center(
         child: Container(
-          height: 60,
-          width: 60,
+          height: 50,
+          width: 50,
           decoration: isSelected
               ? BoxDecoration(
             color: Colors.white,
