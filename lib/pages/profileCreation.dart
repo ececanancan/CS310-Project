@@ -459,7 +459,7 @@ class AdditionalProfilePrompt extends StatelessWidget {
               Text(
                 'Would you like to add anything else to your profile before finalizing?',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400, fontFamily: 'RobotoSerif',),
               ),
               SizedBox(height: 30),
               Row(
@@ -473,9 +473,10 @@ class AdditionalProfilePrompt extends StatelessWidget {
                       EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     ),
                     onPressed: () {
-                      Navigator.pop(context); // Go back to creation
+                      Navigator.pop(context); // Go back to profile creation
                     },
-                    child: Text('Yes', style: TextStyle(color: Colors.white)),
+
+                    child: Text('Yes', style: TextStyle(color: Colors.black, fontFamily: 'RobotoSerif')),
                   ),
                   SizedBox(width: 20),
                   ElevatedButton(
@@ -486,12 +487,61 @@ class AdditionalProfilePrompt extends StatelessWidget {
                       EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     ),
                     onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/HomePage');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => FinalProfileReadyScreen()),
+                      );
                     },
-                    child: Text('No', style: TextStyle(color: Colors.white)),
+
+                    child: Text('No', style: TextStyle(color: Colors.black, fontFamily: 'RobotoSerif')),
                   ),
                 ],
               )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class FinalProfileReadyScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Now you are ready to use the app',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'RobotoSerif',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              const SizedBox(height: 30),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.green,
+                  shape: StadiumBorder(),
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                ),
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/HomePage');
+                },
+                child: Text(
+                  "Let's start",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: 'RobotoSerif',
+                  ),
+                ),
+              ),
             ],
           ),
         ),
