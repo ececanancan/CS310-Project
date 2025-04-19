@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:nature_sync/widgets/navigationBarWidget.dart';
+import 'package:cs_projesi/widgets/navigationBarWidget.dart';
 
 class SettingsPage extends StatelessWidget {
   final int selectedIndex;
