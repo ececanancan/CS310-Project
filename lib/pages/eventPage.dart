@@ -97,7 +97,6 @@ class _EventPageState extends State<EventPage> {
                                 builder: (context) => ProfilePage(
                                   user: matchingProfile,
                                   selectedIndex: 2,
-                                  onItemTapped: (int index) {},
                                 ),
                               ),
                             );
