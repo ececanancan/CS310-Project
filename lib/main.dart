@@ -10,6 +10,11 @@ import 'package:cs_projesi/pages/homePage.dart';
 import 'package:cs_projesi/pages/eventPage.dart';
 import 'package:cs_projesi/pages/profileCreation.dart';
 import 'package:cs_projesi/pages/questionMarkPage.dart';
+import 'package:cs_projesi/pages/ProfilePage.dart';
+import 'package:cs_projesi/data/UserProfile_dart';
+import 'package:cs_projesi/models/UserProfile.dart';
+import 'package:cs_projesi/pages/SettingsPage.dart';
+
 
 
 //main function to run the app
@@ -21,6 +26,8 @@ void main(){
         '/': (context) => ProfileCreationPage(),
         '/HomePage': (context) => HomePage(),
         '/EventPage': (context) => EventPage(event: ModalRoute.of(context)!.settings.arguments as Event),
+        '/ProfilePage': (context) => const ProfilePage(),
+        '/SettingsPage': (context) => const SettingsPage(),
         '/QuestionMarkPage': (context) => const QuestionMarkPage(),
       }
   ));
