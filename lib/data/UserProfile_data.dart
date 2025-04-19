@@ -44,7 +44,7 @@ final List<UserProfile> profs = [
   UserProfile(
     name: 'Demir',
     age: 28,
-    imagePath: 'assets/images/liam.png',
+    imagePath: 'assets/profile_photos/demir.jpg',
     description:
     'Hi, I’m Demir a nature enthusiast passionate about preserving '
         'and protecting our natural environment. I believe that small actions'
