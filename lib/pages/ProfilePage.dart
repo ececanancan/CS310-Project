@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'UserProfile.dart';
-import 'package:nature_sync/widgets/navigationBarWidget.dart';
-import 'package:nature_sync/data/profile_data.dart';
-import 'package:nature_sync/app_colors.dart';
+import 'package:cs_projesi/pages/UserProfile.dart';
+import 'package:cs_projesi/widgets/navigationBarWidget.dart';
+import 'package:cs_projesi/data/profile_data.dart';
+import 'package:cs_projesi/utility_classes/app_colors.dart';
 
 class ProfilePage extends StatefulWidget {
   final UserProfile user;
