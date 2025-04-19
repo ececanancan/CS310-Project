@@ -129,7 +129,6 @@ class _HomePageState extends State<HomePage> {
       ),
       bottomNavigationBar: NavigationBarNature(
         selectedIndex: _selectedIndex,
-        onItemTapped: _onItemTapped,
       ),
     );
   }

@@ -145,7 +145,6 @@ class _QuestionMarkPageState extends State<QuestionMarkPage> {
       ),
       bottomNavigationBar: NavigationBarNature(
         selectedIndex: _selectedIndex,
-        onItemTapped: _onItemTapped,
       ),
 
     );

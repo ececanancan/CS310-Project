@@ -228,7 +228,6 @@ class _EventPageState extends State<EventPage> {
       ),
       bottomNavigationBar: NavigationBarNature(
         selectedIndex: _selectedIndex,
-        onItemTapped: _onItemTapped,
       ),
     );
 

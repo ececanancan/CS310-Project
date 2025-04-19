@@ -1,16 +1,26 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter/material.dart';
-
 class NavigationBarNature extends StatelessWidget {
   final int selectedIndex;
-  final Function(int) onItemTapped;
 
   const NavigationBarNature({
     Key? key,
     required this.selectedIndex,
-    required this.onItemTapped,
   }) : super(key: key);
+
+  static const List<String> _routes = [
+    '/SettingPage',
+    '/ProfilePage',
+    '/HomePage',
+    '/MapPage',
+    '/QuestionMarkPage',
+  ];
+
+  void _onItemTapped(BuildContext context, int index) {
+    if (index != selectedIndex) {
+      Navigator.pushNamed(context, _routes[index]);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +33,7 @@ class NavigationBarNature extends StatelessWidget {
           child: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
             currentIndex: selectedIndex,
-            onTap: onItemTapped,
+            onTap: (index) => _onItemTapped(context, index),
             selectedItemColor: Colors.black54,
             unselectedItemColor: Colors.black54,
             backgroundColor: Color(0xFF67C933),
