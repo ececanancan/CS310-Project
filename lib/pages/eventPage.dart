@@ -8,6 +8,8 @@ import 'package:cs_projesi/widgets/storyBarWidget.dart';
 import 'package:cs_projesi/widgets/navigationBarWidget.dart';
 import 'package:cs_projesi/utility_classes/eventPage_utility.dart';
 import 'package:cs_projesi/utility_classes/app_colors.dart';
+import 'package:cs_projesi/pages/ProfilePage.dart';
+import 'package:cs_projesi/data/UserProfile_data.dart';
 
 class EventPage extends StatefulWidget {
   final Event event;
@@ -83,23 +85,33 @@ class _EventPageState extends State<EventPage> {
                         ),
                       ),
                       GestureDetector(
-                        onTap: (){},
-                        child: Column(
-                          children: [
-                            CircleAvatar(
-                              backgroundImage: AssetImage(event.createdBy.profilePhotoPath), radius: 35,),
-                            SizedBox(height: 2,),
-                            Text(
-                              event.createdBy.name,
-                              style: TextStyle(
-                                fontFamily: 'RobotoSerif',
-                                fontSize: 16,
-                                color: Colors.black87,
-                                letterSpacing: -1,
-                                fontWeight: FontWeight.w500,
+                        onTap: () {
+                          try {
+                            final matchingProfile = profs.firstWhere(
+                                  (profile) => profile.name == event.createdBy.name,
+                            );
+        
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProfilePage(
+                                  user: matchingProfile,
+                                  selectedIndex: 2,
+                                  onItemTapped: (int index) {},
+                                ),
                               ),
-                            ),
-                          ],
+                            );
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Profile not found.')),
+                            );
+                          }
+                        },
+                        child: CircleAvatar(
+                          radius: 25,
+                          backgroundImage: event.createdBy.profilePhotoPath.startsWith('http')
+                              ? NetworkImage(event.createdBy.profilePhotoPath)
+                              : AssetImage(event.createdBy.profilePhotoPath) as ImageProvider,
                         ),
                       ),
                     ],
