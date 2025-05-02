@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:cs_projesi/widgets/navigationBarWidget.dart'; // Make sure this path is correct
+import 'package:cs_projesi/widgets/navigationBarWidget.dart';
 
 class MapPage extends StatelessWidget {
   const MapPage({Key? key}) : super(key: key);
