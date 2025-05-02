@@ -16,6 +16,7 @@ import 'package:cs_projesi/models/UserProfile.dart';
 import 'package:cs_projesi/pages/SettingsPage.dart';
 import 'package:cs_projesi/pages/sign_in_page.dart';
 import 'package:cs_projesi/pages/sign_up_page.dart';
+import 'package:cs_projesi/pages/mapPage.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -29,6 +30,7 @@ void main() {
       '/HomePage': (context) => HomePage(),
       '/EventPage': (context) => EventPage(event: ModalRoute.of(context)!.settings.arguments as Event),
       '/SettingsPage': (context) => const SettingsPage(),
+      '/MapPage': (context) => const MapPage(),
       '/QuestionMarkPage': (context) => const QuestionMarkPage(),
     },
   ));

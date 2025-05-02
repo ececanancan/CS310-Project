@@ -28,10 +28,13 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  intl: ^0.18.1 #for event date
+  flutter_map: ^8.1.1
+  latlong2: ^0.9.0
+  intl: ^0.20.2 #for event date
   flutter:
     sdk: flutter
   material_design_icons_flutter: ^7.0.7296
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
