@@ -2,6 +2,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cs_projesi/utility_classes/app_colors.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 
 class ProfileCreationPage extends StatefulWidget {
@@ -16,6 +19,27 @@ class _ProfileCreationPageState extends State<ProfileCreationPage> {
   final List<String> _favoriteActivities = [];
   final List<String> _favoritePlaces = [];
   File? _selectedImage;
+  String? _phoneNumber;
+  String? _homeLocation;
+
+
+  @override
+  void initState() {
+    super.initState();
+    // Delay to wait for context to be ready
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+
+      setState(() {
+        _phoneNumber = args?['phoneNumber'];
+        _homeLocation = args?['homeLocation'];
+      });
+
+      print('✅ Received from sign-up: $_phoneNumber, $_homeLocation');
+    });
+  }
+
+
 
   final List<String> _activityOptions = [
     'Stargazing',
@@ -403,7 +427,17 @@ class _ProfileCreationPageState extends State<ProfileCreationPage> {
                             ? () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => AdditionalProfilePrompt()),
+                            builder: (context) => AdditionalProfilePrompt(
+                              name: _nameController.text.trim(),
+                              bio: _bioController.text.trim(),
+                              age: int.parse(_ageController.text.trim()),
+                              favoriteActivities: _favoriteActivities,
+                              favoritePlaces: _favoritePlaces,
+                              phoneNumber: _phoneNumber,
+                              homeLocation: _homeLocation,
+                              profileImageFile: _selectedImage,
+                            ),
+                          ),
                         )
                             : null,
                         style: ButtonStyle(
@@ -447,6 +481,27 @@ class _ProfileCreationPageState extends State<ProfileCreationPage> {
 }
 
 class AdditionalProfilePrompt extends StatelessWidget {
+  final String name;
+  final String bio;
+  final int age;
+  final List<String> favoriteActivities;
+  final List<String> favoritePlaces;
+  final String? phoneNumber;
+  final String? homeLocation;
+  final File? profileImageFile;
+
+  const AdditionalProfilePrompt({
+    super.key,
+    required this.name,
+    required this.bio,
+    required this.age,
+    required this.favoriteActivities,
+    required this.favoritePlaces,
+    this.phoneNumber,
+    this.homeLocation,
+    this.profileImageFile,
+  });
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -489,7 +544,18 @@ class AdditionalProfilePrompt extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => FinalProfileReadyScreen()),
+                          MaterialPageRoute(
+                            builder: (context) => FinalProfileReadyScreen(
+                              name: name,
+                              bio: bio,
+                              age: age,
+                              favoriteActivities: favoriteActivities,
+                              favoritePlaces: favoritePlaces,
+                              phoneNumber: phoneNumber,
+                              homeLocation: homeLocation,
+                              profileImageFile: profileImageFile,
+                            ),
+                          )
                       );
                     },
 
@@ -506,6 +572,27 @@ class AdditionalProfilePrompt extends StatelessWidget {
 }
 
 class FinalProfileReadyScreen extends StatelessWidget {
+  final String name;
+  final String bio;
+  final int age;
+  final List<String> favoriteActivities;
+  final List<String> favoritePlaces;
+  final String? phoneNumber;
+  final String? homeLocation;
+  final File? profileImageFile;
+
+  const FinalProfileReadyScreen({
+    Key? key,
+    required this.name,
+    required this.bio,
+    required this.age,
+    required this.favoriteActivities,
+    required this.favoritePlaces,
+    this.phoneNumber,
+    this.homeLocation,
+    this.profileImageFile,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -515,7 +602,7 @@ class FinalProfileReadyScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
+              const Text(
                 'Now you are ready to use the app',
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -528,13 +615,39 @@ class FinalProfileReadyScreen extends StatelessWidget {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.green,
-                  shape: StadiumBorder(),
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  shape: const StadiumBorder(),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 ),
-                onPressed: () {
+                onPressed: () async {
+                  final uid = FirebaseAuth.instance.currentUser!.uid;
+                  String? photoUrl;
+
+                  if (profileImageFile != null) {
+                    final ref = FirebaseStorage.instance
+                        .ref()
+                        .child('profile_photos')
+                        .child('$uid.jpg');
+                    await ref.putFile(profileImageFile!);
+                    photoUrl = await ref.getDownloadURL();
+                  }
+
+                  await FirebaseFirestore.instance.collection('users').doc(uid).set({
+                    'uid': uid,
+                    'name': name,
+                    'bio': bio,
+                    'age': age,
+                    'favoriteActivities': favoriteActivities,
+                    'favoritePlaces': favoritePlaces,
+                    'phoneNumber': phoneNumber,
+                    'homeLocation': homeLocation,
+                    'profilePhotoUrl': photoUrl,
+                    'createdBy': uid,
+                    'createdAt': Timestamp.now(),
+                  });
+
                   Navigator.pushReplacementNamed(context, '/HomePage');
                 },
-                child: Text(
+                child: const Text(
                   "Let's start",
                   style: TextStyle(
                     color: Colors.black,

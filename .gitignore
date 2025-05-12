@@ -32,6 +32,7 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+lib/firebase_options.dart
 
 # Symbolication related
 app.*.symbols
@@ -43,3 +44,12 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Firebase secrets - DO NOT COMMIT
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+
+# Unused platforms (I accidentally added them)
+web/
+macos/
+windows/
