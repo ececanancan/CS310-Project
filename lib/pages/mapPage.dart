@@ -2,15 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:cs_projesi/widgets/navigationBarWidget.dart';
-<<<<<<< HEAD
 import 'package:cs_projesi/data/event_data.dart';
 import 'package:cs_projesi/pages/ProfilePage.dart';
 import 'package:cs_projesi/models/event.dart';
 import 'package:cs_projesi/pages/eventPage.dart';
 import 'package:cs_projesi/data/UserProfile_data.dart';
 import 'package:cs_projesi/models/profile.dart';
-=======
->>>>>>> ad74e48e8fc9a447ffe6e6c0494c13ec0b4207df
+
 
 class MapPage extends StatelessWidget {
   const MapPage({Key? key}) : super(key: key);
