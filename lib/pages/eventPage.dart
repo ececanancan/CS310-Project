@@ -10,6 +10,7 @@ import 'package:cs_projesi/utility_classes/eventPage_utility.dart';
 import 'package:cs_projesi/utility_classes/app_colors.dart';
 import 'package:cs_projesi/pages/ProfilePage.dart';
 import 'package:cs_projesi/data/UserProfile_data.dart';
+import 'package:cs_projesi/pages/showOnMapPage.dart';
 
 class EventPage extends StatefulWidget {
   final Event event;
@@ -188,7 +189,12 @@ class _EventPageState extends State<EventPage> {
 
                         GestureDetector(
                           onTap: () {
-                            print("Show on map clicked");
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ShowOnMapPage(event: event),
+                              ),
+                            );
                           },
                           child: Container(
                             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
@@ -212,6 +218,7 @@ class _EventPageState extends State<EventPage> {
                             ),
                           ),
                         ),
+
                       ],
                     ),
                   ),

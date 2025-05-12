@@ -1,9 +1,11 @@
 import 'package:intl/intl.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:cs_projesi/models/profile.dart';
 
-class Event{
+class Event {
   Profile createdBy;
   String location;
+  LatLng coordinates; // <-- New field for map markers
   DateTime date;
   String descriptionMini;
   String eventPhotoPath;
@@ -16,6 +18,7 @@ class Event{
   Event({
     required this.createdBy,
     required this.location,
+    required this.coordinates,
     required this.date,
     required this.descriptionMini,
     required this.eventPhotoPath,

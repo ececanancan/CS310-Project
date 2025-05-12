@@ -2,6 +2,7 @@ import 'package:cs_projesi/models/profile.dart';
 import 'package:cs_projesi/models/event.dart';
 import 'package:cs_projesi/data/profile_data.dart';
 import 'package:intl/intl.dart';
+import 'package:latlong2/latlong.dart';
 
 Profile findProfileByName(String name) =>
     profiles.firstWhere((p) => p.name == name);
@@ -11,18 +12,25 @@ final List<Event> events = [
   Event(
       createdBy: findProfileByName("Demir"),
       location: "Polonezköy Nature Park",
+      coordinates: LatLng(41.1186, 29.1307),
       date: DateTime.now().add(Duration(days: 1, hours: 3)),
       descriptionMini: "Forest Clean-Up at Polonezköy Nature Park!",
       eventPhotoPath: "assets/nature_photos/orman_photo.jpg",
-      descriptionLarge: "Hello Nature Guardians! \nJoin us at the serene Polonezköy Nature Park for a meaningful forest clean-up event. This effort aims to raise awareness about land pollution in natural parks and promote collective responsibility for protecting our green spaces. Together, we’ll help preserve the purity of this beloved forest while building a stronger environmental community.",
-      where: "Polonezköy Tabiat Parkı - We'll meet at the main entrance gate and head into one of the picnic areas where waste is most visible.",
+      descriptionLarge: "Hello Nature Guardians! \nJoin us at the serene Polonezköy Nature Park for a "
+          "meaningful forest clean-up event. This effort aims to raise awareness about land pollution in"
+          " natural parks and promote collective responsibility for protecting our green spaces. Together, "
+          "we’ll help preserve the purity of this beloved forest while building a stronger environmental community.",
+      where: "Polonezköy Tabiat Parkı - We'll meet at the main entrance gate"
+          " and head into one of the picnic areas where waste is most visible.",
       bring: "1-Gloves to safely collect litter. \n2-Trash bags (preferably eco-friendly). \n3-Sunscreen, insect repellent, hats, and reusable water bottles to stay safe and hydrated.",
-      goal: "Our goal is to protect the forest by cleaning and educating. It's not just about picking up trash—it's about sparking awareness and action. \nLooking for Forest Friends! \nIf you're passionate about nature and want to make a difference, come join us! Let’s turn this clean-up into a positive memory together.",
+      goal: "Our goal is to protect the forest by cleaning and educating. "
+          "It's not just about picking up trash—it's about sparking awareness and action. \nLooking for Forest Friends! \nIf you're passionate about nature and want to make a difference, come join us! Let’s turn this clean-up into a positive memory together.",
       when: "${DateFormat('EEEE, MMMM d').format(DateTime.now().add(Duration(days: 1, hours: 3)))}, from ${DateFormat('h:mm a').format(DateTime.now().add(Duration(days: 1, hours: 3)))}"
   ),
   Event(
       createdBy: findProfileByName("Eliz"),
       location: "Çamlıca Hill",
+      coordinates: LatLng(41.0201, 29.0666),
       date: DateTime.now().add(Duration(hours: 2)),
       descriptionMini: "Witness the Majestic Stork Migration Over Istanbul",
       eventPhotoPath: "assets/nature_photos/idk_wid.jpg",
@@ -35,6 +43,7 @@ final List<Event> events = [
   Event(
       createdBy: findProfileByName("Josef"),
       location: "Moda Coast, Kadıköy",
+      coordinates: LatLng(40.9839, 29.0256),
       date: DateTime.now().add(Duration(days: 1, hours: 2)),
       descriptionMini: "Relaxing Picnic Gathering at Moda Coast!",
       eventPhotoPath: "assets/nature_photos/sahil_moda.jpg",
@@ -47,3 +56,5 @@ final List<Event> events = [
 
 
 ];
+
+

@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:cs_projesi/widgets/navigationBarWidget.dart';
+import 'package:cs_projesi/pages/contactUsPage.dart'; // Make sure the import path is correct
 
 class SettingsPage extends StatelessWidget {
-  const SettingsPage({
-    Key? key,
-  }) : super(key: key);
+  const SettingsPage({Key? key}) : super(key: key);
+
+  void _logout(BuildContext context) {
+    // TODO: Implement actual logout logic here (e.g., clear user state, tokens)
+    Navigator.of(context).popUntil((route) => route.isFirst);
+    // You can navigate to a login page if you have one
+  }
 
   Widget _buildTile(IconData icon, String label, VoidCallback onTap) {
     return GestureDetector(
@@ -56,14 +61,18 @@ class SettingsPage extends StatelessWidget {
             // Navigate to privacy settings
           }),
           _buildTile(MdiIcons.phone, 'Contact Us', () {
-            // Navigate to contact page
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const ContactUsPage()),
+            );
+          }),
+          _buildTile(Icons.logout, 'Logout', () {
+            _logout(context);
           }),
         ],
       ),
-      bottomNavigationBar: NavigationBarNature(
-        selectedIndex: _selectedIndex,
-
-      ),
+      bottomNavigationBar: NavigationBarNature(selectedIndex: _selectedIndex),
     );
   }
 }
+
+

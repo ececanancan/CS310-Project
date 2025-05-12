@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:cs_projesi/widgets/navigationBarWidget.dart';
-import 'package:cs_projesi/data/event_data.dart';
 import 'package:cs_projesi/pages/ProfilePage.dart';
 import 'package:cs_projesi/models/event.dart';
 import 'package:cs_projesi/pages/eventPage.dart';
 import 'package:cs_projesi/data/UserProfile_data.dart';
 import 'package:cs_projesi/models/profile.dart';
 
-class MapPage extends StatelessWidget {
-  const MapPage({Key? key}) : super(key: key);
+class ShowOnMapPage extends StatelessWidget {
+  final Event event;
+
+  const ShowOnMapPage({Key? key, required this.event}) : super(key: key);
 
   void _navigateToEvent(BuildContext context, Event event) {
     Navigator.push(
@@ -40,12 +39,11 @@ class MapPage extends StatelessWidget {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Map of Istanbul"),
+        title: const Text("Show Event on Map"),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
       ),
@@ -54,7 +52,7 @@ class MapPage extends StatelessWidget {
           Expanded(
             child: FlutterMap(
               options: MapOptions(
-                initialCenter: LatLng(41.0082, 28.9784),
+                initialCenter: event.coordinates,
                 maxZoom: 18.0,
                 initialZoom: 13.0,
               ),
@@ -65,9 +63,8 @@ class MapPage extends StatelessWidget {
                   userAgentPackageName: 'com.example.app',
                 ),
                 MarkerLayer(
-                  markers: events.map((event) {
-                    final profile = event.createdBy;
-                    return Marker(
+                  markers: [
+                    Marker(
                       point: event.coordinates,
                       width: 160,
                       height: 180,
@@ -105,15 +102,15 @@ class MapPage extends StatelessWidget {
                                   top: 6,
                                   right: 6,
                                   child: GestureDetector(
-                                    onTap: () => _navigateToProfile(context, profile),
+                                    onTap: () => _navigateToProfile(context, event.createdBy),
                                     child: CircleAvatar(
                                       radius: 18,
                                       backgroundColor: Colors.white,
                                       child: CircleAvatar(
                                         radius: 16,
-                                        backgroundImage: profile.profilePhotoPath.startsWith("http")
-                                            ? NetworkImage(profile.profilePhotoPath)
-                                            : AssetImage(profile.profilePhotoPath) as ImageProvider,
+                                        backgroundImage: event.createdBy.profilePhotoPath.startsWith("http")
+                                            ? NetworkImage(event.createdBy.profilePhotoPath)
+                                            : AssetImage(event.createdBy.profilePhotoPath) as ImageProvider,
                                       ),
                                     ),
                                   ),
@@ -154,15 +151,14 @@ class MapPage extends StatelessWidget {
                           ],
                         ),
                       ),
-                    );
-                  }).toList(),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
         ],
       ),
-      bottomNavigationBar: const NavigationBarNature(selectedIndex: 3),
     );
   }
 }
