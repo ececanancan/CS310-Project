@@ -48,16 +48,14 @@ class MyApp extends StatelessWidget {
         '/ProfileCreation': (context) => ProfileCreationPage(),
         '/HomePage': (context) => HomePage(),
         '/EventPage': (context) =>
-            EventPage(event: ModalRoute.of(context)!.settings.arguments as Event),
+            EventPage(event: ModalRoute
+                .of(context)!
+                .settings
+                .arguments as Event),
         '/SettingsPage': (context) => const SettingsPage(),
         '/MapPage': (context) => const MapPage(),
         '/QuestionMarkPage': (context) => const QuestionMarkPage(),
       },
     );
   }
-<<<<<<< HEAD
 }
-=======
-}
-
->>>>>>> ad74e48e8fc9a447ffe6e6c0494c13ec0b4207df
