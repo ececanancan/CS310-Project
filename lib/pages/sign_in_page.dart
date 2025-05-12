@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'sign_up_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -18,25 +19,72 @@ class _SignInPageState extends State<SignInPage> {
 
   bool _obscurePassword = true;
 
-  void _submitForm() {
+  Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      Navigator.pushNamed(context, '/HomePage');
-    } else {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text("Form Invalid"),
-          content: const Text("Please enter valid email and password."),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("OK"),
-            ),
-          ],
-        ),
-      );
+      try {
+        final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+        );
+
+        print("✅ Signed in: ${credential.user?.uid}");
+        Navigator.pushReplacementNamed(context, '/HomePage');
+
+      } on FirebaseAuthException catch (e) {
+        print("🚨 FirebaseAuthException code: ${e.code}");
+        String message;
+        switch (e.code) {
+          case 'user-not-found':
+            message = 'No account found for that email.';
+            break;
+          case 'wrong-password':
+            message = 'Incorrect password. Please try again.';
+            break;
+          case 'invalid-email':
+            message = 'That email address is badly formatted.';
+            break;
+          case 'too-many-requests':
+            message = 'Too many failed attempts. Try again later.';
+            break;
+          default:
+            message = 'Login failed. Please try again.';
+        }
+
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text("Authentication Error"),
+            content: Text(message),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("OK"),
+              ),
+            ],
+          ),
+        );
+      }
+      catch (e) {
+        print("❌ Unexpected error: $e");
+
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text("Unexpected Error"),
+            content: Text("Something went wrong. Please try again.\n\n$e"),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("OK"),
+              ),
+            ],
+          ),
+        );
+      }
+
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
