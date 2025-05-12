@@ -2,15 +2,36 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:cs_projesi/widgets/navigationBarWidget.dart';
 import 'package:cs_projesi/pages/contactUsPage.dart'; // Make sure the import path is correct
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({Key? key}) : super(key: key);
 
-  void _logout(BuildContext context) {
-    // TODO: Implement actual logout logic here (e.g., clear user state, tokens)
-    Navigator.of(context).popUntil((route) => route.isFirst);
-    // You can navigate to a login page if you have one
+  void _logout(BuildContext context) async {
+    final shouldLogout = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Confirm Logout"),
+        content: const Text("Are you sure you want to log out?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text("Logout"),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldLogout == true) {
+      await FirebaseAuth.instance.signOut();
+      Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false); // back to SignIn
+    }
   }
+
 
   Widget _buildTile(IconData icon, String label, VoidCallback onTap) {
     return GestureDetector(

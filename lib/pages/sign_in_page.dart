@@ -34,14 +34,8 @@ class _SignInPageState extends State<SignInPage> {
         print("🚨 FirebaseAuthException code: ${e.code}");
         String message;
         switch (e.code) {
-          case 'user-not-found':
-            message = 'No account found for that email.';
-            break;
-          case 'wrong-password':
-            message = 'Incorrect password. Please try again.';
-            break;
-          case 'invalid-email':
-            message = 'That email address is badly formatted.';
+          case 'invalid-credential':
+            message = 'Invalid credentials';
             break;
           case 'too-many-requests':
             message = 'Too many failed attempts. Try again later.';
