@@ -14,6 +14,7 @@ import 'package:cs_projesi/pages/SettingsPage.dart';
 import 'package:cs_projesi/pages/sign_in_page.dart';
 import 'package:cs_projesi/pages/sign_up_page.dart';
 import 'package:cs_projesi/pages/mapPage.dart';
+import 'package:cs_projesi/pages/personalPage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
@@ -52,6 +53,7 @@ class MyApp extends StatelessWidget {
         '/SettingsPage': (context) => const SettingsPage(),
         '/MapPage': (context) => const MapPage(),
         '/QuestionMarkPage': (context) => const QuestionMarkPage(),
+        '/PersonalPage': (context) => const PersonalPage(),
       },
     );
   }

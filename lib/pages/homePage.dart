@@ -44,15 +44,6 @@ class _HomePageState extends State<HomePage> {
                           icon: Icon(Icons.arrow_back)),
                       Padding(
                         padding: EdgeInsets.only(right: 2),
-                        child: Text(
-                          "Hi, Kiyan",
-                          overflow: TextOverflow.clip, //If the name is long (...)
-                          style: TextStyle(
-                            fontFamily: 'RobotoSerif',
-                            fontSize: 18,
-                            color: Colors.black45,
-                          ),
-                        ),
                       ),
                     ],
                   ),
@@ -103,13 +94,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.topCenter,
-            child: Padding(
-              padding: EdgeInsets.only(top: 0.1),
-              child: IconButton(onPressed: (){} ,icon: Icon(Icons.notifications_none_sharp), iconSize: 25,),
-            ),
-          )
         ],
       ),
       bottomNavigationBar: NavigationBarNature(

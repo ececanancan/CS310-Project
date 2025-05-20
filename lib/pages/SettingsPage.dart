@@ -1,8 +1,11 @@
+import 'package:cs_projesi/pages/privacySettingsPage.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:cs_projesi/widgets/navigationBarWidget.dart';
-import 'package:cs_projesi/pages/contactUsPage.dart'; // Make sure the import path is correct
+import 'package:cs_projesi/pages/contactUsPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import 'editProfileSettingsPage.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -75,12 +78,18 @@ class SettingsPage extends StatelessWidget {
           _buildTile(MdiIcons.accountMultiple, 'Followings', () {
             // Navigate to followings
           }),
-          _buildTile(MdiIcons.accountEdit, 'Edit Profile', () {
-            // Navigate to edit profile
+        _buildTile(MdiIcons.accountEdit, 'Edit Profile', () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const EditProfileSettingsPage()),
+          );
+        }),
+
+        _buildTile(MdiIcons.lock, 'Privacy', () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const PrivacySettingsPage()),
+            );
           }),
-          _buildTile(MdiIcons.lock, 'Privacy', () {
-            // Navigate to privacy settings
-          }),
+
           _buildTile(MdiIcons.phone, 'Contact Us', () {
             Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => const ContactUsPage()),

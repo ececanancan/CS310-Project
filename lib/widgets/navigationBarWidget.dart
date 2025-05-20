@@ -10,7 +10,7 @@ class NavigationBarNature extends StatelessWidget {
 
   static const List<String> _routes = [
     '/SettingsPage',
-    '/ProfilePage',
+    '/PersonalPage',
     '/HomePage',
     '/MapPage',
     '/QuestionMarkPage',
