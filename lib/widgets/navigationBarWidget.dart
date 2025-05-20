@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cs_projesi/firebase/firebase_service.dart';
+import 'package:cs_projesi/models/profile.dart';
 
 class NavigationBarNature extends StatelessWidget {
   final int selectedIndex;
@@ -16,8 +19,31 @@ class NavigationBarNature extends StatelessWidget {
     '/QuestionMarkPage',
   ];
 
-  void _onItemTapped(BuildContext context, int index) {
-    Navigator.pushNamed(context, _routes[index]);
+  void _onItemTapped(BuildContext context, int index) async {
+    if (index == 1) {
+      // Profile button tapped
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final profile = await FirebaseService().getProfile(user.uid);
+        if (profile != null) {
+          Navigator.pushNamed(
+            context,
+            '/ProfilePage',
+            arguments: {'profile': profile, 'isOwnProfile': true},
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Profile not found.')),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('User not signed in.')),
+        );
+      }
+    } else {
+      Navigator.pushNamed(context, _routes[index]);
+    }
   }
 
   @override

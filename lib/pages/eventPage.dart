@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:cs_projesi/models/profile.dart';
 import 'package:cs_projesi/models/event.dart';
-import 'package:cs_projesi/data/profile_data.dart';
-import 'package:cs_projesi/data/event_data.dart';
 import 'package:cs_projesi/widgets/eventCardWidget.dart';
 import 'package:cs_projesi/widgets/storyBarWidget.dart';
 import 'package:cs_projesi/widgets/navigationBarWidget.dart';
 import 'package:cs_projesi/utility_classes/eventPage_utility.dart';
 import 'package:cs_projesi/utility_classes/app_colors.dart';
 import 'package:cs_projesi/pages/ProfilePage.dart';
-import 'package:cs_projesi/data/UserProfile_data.dart';
 import 'package:cs_projesi/pages/showOnMapPage.dart';
+import 'package:cs_projesi/firebase/firebase_service.dart';
 
 class EventPage extends StatefulWidget {
   final Event event;
@@ -24,7 +22,7 @@ class EventPage extends StatefulWidget {
 class _EventPageState extends State<EventPage> {
   int _selectedIndex = 2;
   bool _isRequested = false;
-
+  final FirebaseService _firebaseService = FirebaseService();
 
   @override
   Widget build(BuildContext context) {
@@ -55,11 +53,12 @@ class _EventPageState extends State<EventPage> {
                       ),
                       Text(
                         event.formattedDate,
-                        overflow: TextOverflow.clip, //If the name is long (...)
+                        overflow: TextOverflow.clip,
                         style: TextStyle(
                           fontFamily: 'RobotoSerif',
                           fontSize: 18,
-                          color: Colors.black45,),
+                          color: Colors.black45,
+                        ),
                       ),
                     ],
                   ),
@@ -74,7 +73,7 @@ class _EventPageState extends State<EventPage> {
                           child: Text(
                             event.descriptionMini,
                             softWrap: true,
-                            overflow: TextOverflow.clip, //If the name is long (...)
+                            overflow: TextOverflow.clip,
                             style: TextStyle(
                               fontFamily: 'RobotoSerif',
                               fontSize: 22,
@@ -85,33 +84,44 @@ class _EventPageState extends State<EventPage> {
                           ),
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          try {
-                            final matchingProfile = profs.firstWhere(
-                                  (profile) => profile.name == event.createdBy.name,
-                            );
-        
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ProfilePage(
-                                  user: matchingProfile,
-                                ),
-                              ),
-                            );
-                          } catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Profile not found.')),
+                      FutureBuilder<Profile?>(
+                        future: _firebaseService.getProfile(event.createdBy),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return CircleAvatar(
+                              radius: 25,
+                              backgroundColor: Colors.grey[300],
                             );
                           }
+
+                          if (snapshot.hasError || !snapshot.hasData) {
+                            return CircleAvatar(
+                              radius: 25,
+                              backgroundColor: Colors.grey[300],
+                              child: Icon(Icons.person, color: Colors.grey[600]),
+                            );
+                          }
+
+                          final profile = snapshot.data!;
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProfilePage(
+                                    user: profile,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: CircleAvatar(
+                              radius: 25,
+                              backgroundImage: profile.profilePhotoPath.startsWith('http')
+                                  ? NetworkImage(profile.profilePhotoPath)
+                                  : AssetImage(profile.profilePhotoPath) as ImageProvider,
+                            ),
+                          );
                         },
-                        child: CircleAvatar(
-                          radius: 25,
-                          backgroundImage: event.createdBy.profilePhotoPath.startsWith('http')
-                              ? NetworkImage(event.createdBy.profilePhotoPath)
-                              : AssetImage(event.createdBy.profilePhotoPath) as ImageProvider,
-                        ),
                       ),
                     ],
                   ),
@@ -142,7 +152,7 @@ class _EventPageState extends State<EventPage> {
                           children: [
                             EventPageUtility.infoTile("", event.descriptionLarge,),
                             EventPageUtility.infoTile("When:", event.when),
-                            EventPageUtility.infoTile("Where:", event.bring),
+                            EventPageUtility.infoTile("Where:", event.where),
                             EventPageUtility.infoTile("What to bring:", event.bring),
                             EventPageUtility.infoTile("Goal:", event.goal),
                           ],
@@ -218,11 +228,9 @@ class _EventPageState extends State<EventPage> {
                             ),
                           ),
                         ),
-
                       ],
                     ),
                   ),
-                  SizedBox(height: 3,)
                 ],
               ),
             ),
@@ -233,7 +241,6 @@ class _EventPageState extends State<EventPage> {
         selectedIndex: _selectedIndex,
       ),
     );
-
   }
 }
 

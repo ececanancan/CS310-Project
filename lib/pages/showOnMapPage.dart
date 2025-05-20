@@ -3,8 +3,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:cs_projesi/pages/ProfilePage.dart';
 import 'package:cs_projesi/models/event.dart';
 import 'package:cs_projesi/pages/eventPage.dart';
-import 'package:cs_projesi/data/UserProfile_data.dart';
 import 'package:cs_projesi/models/profile.dart';
+import 'package:cs_projesi/firebase/firebase_service.dart';
 
 class ShowOnMapPage extends StatelessWidget {
   final Event event;
@@ -21,22 +21,12 @@ class ShowOnMapPage extends StatelessWidget {
   }
 
   void _navigateToProfile(BuildContext context, Profile profile) {
-    try {
-      final matchingProfile = profs.firstWhere(
-            (p) => p.name == profile.name,
-      );
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ProfilePage(user: matchingProfile),
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profile not found.')),
-      );
-    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProfilePage(user: profile),
+      ),
+    );
   }
 
   @override
@@ -101,18 +91,39 @@ class ShowOnMapPage extends StatelessWidget {
                                 Positioned(
                                   top: 6,
                                   right: 6,
-                                  child: GestureDetector(
-                                    onTap: () => _navigateToProfile(context, event.createdBy),
-                                    child: CircleAvatar(
-                                      radius: 18,
-                                      backgroundColor: Colors.white,
-                                      child: CircleAvatar(
-                                        radius: 16,
-                                        backgroundImage: event.createdBy.profilePhotoPath.startsWith("http")
-                                            ? NetworkImage(event.createdBy.profilePhotoPath)
-                                            : AssetImage(event.createdBy.profilePhotoPath) as ImageProvider,
-                                      ),
-                                    ),
+                                  child: FutureBuilder<Profile?>(
+                                    future: FirebaseService().getProfile(event.createdBy),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                        return CircleAvatar(
+                                          radius: 18,
+                                          backgroundColor: Colors.grey[300],
+                                        );
+                                      }
+
+                                      if (snapshot.hasError || !snapshot.hasData) {
+                                        return CircleAvatar(
+                                          radius: 18,
+                                          backgroundColor: Colors.grey[300],
+                                          child: Icon(Icons.person, color: Colors.grey[600]),
+                                        );
+                                      }
+
+                                      final profile = snapshot.data!;
+                                      return GestureDetector(
+                                        onTap: () => _navigateToProfile(context, profile),
+                                        child: CircleAvatar(
+                                          radius: 18,
+                                          backgroundColor: Colors.white,
+                                          child: CircleAvatar(
+                                            radius: 16,
+                                            backgroundImage: profile.profilePhotoPath.startsWith("http")
+                                                ? NetworkImage(profile.profilePhotoPath)
+                                                : AssetImage(profile.profilePhotoPath) as ImageProvider,
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
                               ],

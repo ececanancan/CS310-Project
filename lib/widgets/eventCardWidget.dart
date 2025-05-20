@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:cs_projesi/models/event.dart';
-import 'package:cs_projesi/data/UserProfile_data.dart';
+import 'package:cs_projesi/models/profile.dart';
+import 'package:cs_projesi/firebase/firebase_service.dart';
 import 'package:cs_projesi/pages/ProfilePage.dart';
 
 class EventCardWidget extends StatelessWidget {
   final Event event;
+  final FirebaseService _firebaseService = FirebaseService();
 
-  const EventCardWidget({super.key, required this.event});
+  EventCardWidget({super.key, required this.event});
 
   @override
   Widget build(BuildContext context) {
@@ -21,54 +23,83 @@ class EventCardWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              GestureDetector(
-                onTap: () {
-                  try {
-                    final matchingProfile = profs.firstWhere(
-                          (profile) => profile.name == event.createdBy.name,
-                    );
-
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ProfilePage(
-                          user: matchingProfile,
-                        ),
-                      ),
-                    );
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Profile not found.')),
+              FutureBuilder<Profile?>(
+                future: _firebaseService.getProfile(event.createdBy),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircleAvatar(
+                      radius: 25,
+                      backgroundColor: Colors.grey[300],
                     );
                   }
+
+                  if (snapshot.hasError || !snapshot.hasData) {
+                    return CircleAvatar(
+                      radius: 25,
+                      backgroundColor: Colors.grey[300],
+                      child: Icon(Icons.person, color: Colors.grey[600]),
+                    );
+                  }
+
+                  final profile = snapshot.data!;
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProfilePage(
+                            user: profile,
+                          ),
+                        ),
+                      );
+                    },
+                    child: CircleAvatar(
+                      radius: 25,
+                      backgroundImage: profile.profilePhotoPath.startsWith('http')
+                          ? NetworkImage(profile.profilePhotoPath)
+                          : AssetImage(profile.profilePhotoPath) as ImageProvider,
+                    ),
+                  );
                 },
-                child: CircleAvatar(
-                  radius: 25,
-                  backgroundImage: event.createdBy.profilePhotoPath.startsWith('http')
-                      ? NetworkImage(event.createdBy.profilePhotoPath)
-                      : AssetImage(event.createdBy.profilePhotoPath) as ImageProvider,
-                ),
               ),
               SizedBox(width: 5,),
-              Text(
-                event.createdBy.name,
-                softWrap: true,
-                overflow: TextOverflow.visible,
-                style: TextStyle(
-                  fontFamily: 'RobotoSerif',
-                  fontSize: 15,
-                  color: Colors.black87,
-                  fontWeight: FontWeight.bold,
-                ),
+              FutureBuilder<Profile?>(
+                future: _firebaseService.getProfile(event.createdBy),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting || !snapshot.hasData) {
+                    return Text(
+                      'Loading...',
+                      style: TextStyle(
+                        fontFamily: 'RobotoSerif',
+                        fontSize: 15,
+                        color: Colors.black87,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    );
+                  }
+
+                  return Text(
+                    snapshot.data!.name,
+                    softWrap: true,
+                    overflow: TextOverflow.visible,
+                    style: TextStyle(
+                      fontFamily: 'RobotoSerif',
+                      fontSize: 15,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
+                },
               ),
               Spacer(),
               Text(
                 event.formattedDate,
-                overflow: TextOverflow.clip, //If the name is long (...)
+                overflow: TextOverflow.clip,
                 style: TextStyle(
                   fontFamily: 'RobotoSerif',
                   fontSize: 15,
-                  color: Colors.black45,),
+                  color: Colors.black45,
+                ),
               ),
               Spacer(),
               Icon(Icons.location_on_outlined, size: 25, color: Colors.black45,),
@@ -77,7 +108,7 @@ class EventCardWidget extends StatelessWidget {
                 onTap: (){},
                 child: SizedBox(
                   width: 100,
-                  child :Text(
+                  child: Text(
                     event.location,
                     softWrap: true,
                     overflow: TextOverflow.visible,
@@ -114,7 +145,7 @@ class EventCardWidget extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(left: 10, right: 10, top: 3, bottom:10),
             child: Container(
-              child :Text(
+              child: Text(
                 event.descriptionMini,
                 softWrap: true,
                 overflow: TextOverflow.visible,
@@ -130,6 +161,5 @@ class EventCardWidget extends StatelessWidget {
         ],
       ),
     );
-
   }
 }

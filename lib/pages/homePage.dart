@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cs_projesi/models/profile.dart';
 import 'package:cs_projesi/models/event.dart';
-import 'package:cs_projesi/data/profile_data.dart';
-import 'package:cs_projesi/data/event_data.dart';
 import 'package:cs_projesi/widgets/eventCardWidget.dart';
 import 'package:cs_projesi/widgets/storyBarWidget.dart';
 import 'package:cs_projesi/widgets/navigationBarWidget.dart';
-
+import 'package:cs_projesi/firebase/firebase_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -17,11 +16,27 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 2;
-
-
+  final FirebaseService _firebaseService = FirebaseService();
+  String? userName;
 
   @override
-  Widget build(BuildContext context){
+  void initState() {
+    super.initState();
+    _loadUserName();
+  }
+
+  Future<void> _loadUserName() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final profile = await _firebaseService.getProfile(user.uid);
+      setState(() {
+        userName = profile?.name ?? '';
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(5),
@@ -44,6 +59,17 @@ class _HomePageState extends State<HomePage> {
                           icon: Icon(Icons.arrow_back)),
                       Padding(
                         padding: EdgeInsets.only(right: 2),
+
+                        child: Text(
+                          userName != null && userName!.isNotEmpty ? "Hi, $userName" : "Hi",
+                          overflow: TextOverflow.clip,
+                          style: TextStyle(
+                            fontFamily: 'RobotoSerif',
+                            fontSize: 18,
+                            color: Colors.black45,
+                          ),
+                        ),
+
                       ),
                     ],
                   ),
@@ -83,10 +109,27 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                   Expanded(
-                    child: ListView.builder(
-                      itemCount: events.length,
-                      itemBuilder: (context, index){
-                        return EventCardWidget(event: events[index]);
+                    child: StreamBuilder<List<Event>>(
+                      stream: _firebaseService.getEvents(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          return Center(child: Text('Error: ${snapshot.error}'));
+                        }
+
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+
+                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return Center(child: Text('No events found'));
+                        }
+
+                        return ListView.builder(
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) {
+                            return EventCardWidget(event: snapshot.data![index]);
+                          },
+                        );
                       },
                     ),
                   ),
@@ -94,6 +137,19 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
+
+          Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: EdgeInsets.only(top: 0.1),
+              child: IconButton(
+                onPressed: (){},
+                icon: Icon(Icons.notifications_none_sharp),
+                iconSize: 25,
+              ),
+            ),
+          )
+
         ],
       ),
       bottomNavigationBar: NavigationBarNature(
