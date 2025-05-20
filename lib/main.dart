@@ -1,3 +1,4 @@
+import 'package:cs_projesi/pages/personalPage.dart';
 import 'package:flutter/material.dart';
 import 'package:cs_projesi/models/profile.dart';
 import 'package:cs_projesi/models/event.dart';
@@ -60,6 +61,7 @@ class MyApp extends StatelessWidget {
         '/EventPage': (context) =>
             EventPage(event: ModalRoute.of(context)!.settings.arguments as Event),
         '/SettingsPage': (context) => const SettingsPage(),
+        '/PersonalPage': (context) => const PersonalPage(),
         '/MapPage': (context) => const MapPage(),
         '/QuestionMarkPage': (context) => const QuestionMarkPage(),
         '/ProfilePage': (context) {
