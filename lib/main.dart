@@ -61,8 +61,8 @@ class MyApp extends StatelessWidget {
         '/EventPage': (context) =>
             EventPage(event: ModalRoute.of(context)!.settings.arguments as Event),
         '/SettingsPage': (context) => const SettingsPage(),
-        '/MapPage': (context) => const MapPage(),
         '/PersonalPage': (context) => const PersonalPage(),
+        '/MapPage': (context) => const MapPage(),
         '/QuestionMarkPage': (context) => const QuestionMarkPage(),
         '/ProfilePage': (context) {
           final args = ModalRoute.of(context)!.settings.arguments;
