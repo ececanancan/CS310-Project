@@ -17,26 +17,26 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cs_projesi/firebase/firebase_service.dart';
 import 'firebase_options.dart';
 
+Future<void> ensureDummyDataUploaded() async {
+  final firebaseService = FirebaseService();
+  try {
+    await firebaseService.uploadDummyData();
+    print('Dummy data uploaded successfully');
+  } catch (e) {
+    print('Error uploading dummy data: $e');
+  }
+}
+
 void main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    
-    // Upload dummy data
-    final firebaseService = FirebaseService();
-    try {
-      await firebaseService.uploadDummyData();
-      print('Dummy data uploaded successfully');
-    } catch (e) {
-      print('Error uploading dummy data: $e');
-      // Continue with app launch even if dummy data upload fails
-    }
+    await ensureDummyDataUploaded();
   } catch (e) {
     print('Error initializing Firebase: $e');
   }
-  
   runApp(const MyApp());
 }
 
