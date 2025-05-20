@@ -571,7 +571,7 @@ class AdditionalProfilePrompt extends StatelessWidget {
   }
 }
 
-class FinalProfileReadyScreen extends StatelessWidget {
+class FinalProfileReadyScreen extends StatefulWidget {
   final String name;
   final String bio;
   final int age;
@@ -594,6 +594,14 @@ class FinalProfileReadyScreen extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<FinalProfileReadyScreen> createState() => _FinalProfileReadyScreenState();
+}
+
+class _FinalProfileReadyScreenState extends State<FinalProfileReadyScreen> {
+  bool _isLoading = false;
+  String? _errorMessage;
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
@@ -612,40 +620,79 @@ class FinalProfileReadyScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 30),
+              if (_isLoading) ...[
+                const CircularProgressIndicator(),
+                const SizedBox(height: 20),
+              ],
+              if (_errorMessage != null) ...[
+                Text(
+                  _errorMessage!,
+                  style: const TextStyle(color: Colors.red),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+              ],
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.green,
                   shape: const StadiumBorder(),
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 ),
-                onPressed: () async {
-                  final uid = FirebaseAuth.instance.currentUser!.uid;
-                  String? photoUrl;
-
-                  if (profileImageFile != null) {
-                    final ref = FirebaseStorage.instance
-                        .ref()
-                        .child('profile_photos')
-                        .child('$uid.jpg');
-                    await ref.putFile(profileImageFile!);
-                    photoUrl = await ref.getDownloadURL();
-                  }
-
-                  await FirebaseFirestore.instance.collection('users').doc(uid).set({
-                    'uid': uid,
-                    'name': name,
-                    'bio': bio,
-                    'age': age,
-                    'favoriteActivities': favoriteActivities,
-                    'favoritePlaces': favoritePlaces,
-                    'phoneNumber': phoneNumber,
-                    'homeLocation': homeLocation,
-                    'profilePhotoUrl': photoUrl,
-                    'createdBy': uid,
-                    'createdAt': Timestamp.now(),
-                  });
-
+                onPressed: _isLoading ? null : () async {
                   Navigator.pushReplacementNamed(context, '/HomePage');
+                  setState(() {
+                    _isLoading = true;
+                    _errorMessage = null;
+                  });
+                  try {
+                    final uid = FirebaseAuth.instance.currentUser!.uid;
+                    String? photoUrl;
+
+                    if (widget.profileImageFile != null) {
+                      final ref = FirebaseStorage.instance
+                          .ref()
+                          .child('profile_photos')
+                          .child('$uid.jpg');
+                      await ref.putFile(widget.profileImageFile!);
+                      photoUrl = await ref.getDownloadURL();
+                    }
+
+                    await FirebaseFirestore.instance.collection('users').doc(uid).set({
+                      'uid': uid,
+                      'name': widget.name,
+                      'bio': widget.bio,
+                      'age': widget.age,
+                      'favoriteActivities': widget.favoriteActivities,
+                      'favoritePlaces': widget.favoritePlaces,
+                      'phoneNumber': widget.phoneNumber,
+                      'homeLocation': widget.homeLocation,
+                      'profilePhotoUrl': photoUrl,
+                      'createdBy': uid,
+                      'createdAt': Timestamp.now(),
+                    });
+
+                    await FirebaseFirestore.instance.collection('profiles').doc(uid).set({
+                      'id': uid,
+                      'name': widget.name,
+                      'surname': '',
+                      'hasEvent': false,
+                      'profilePhotoPath': photoUrl ?? '',
+                      'createdBy': uid,
+                      'createdAt': Timestamp.now(),
+                      'age': widget.age,
+                      'bio': widget.bio,
+                      'favoriteActivities': widget.favoriteActivities,
+                      'favoritePlaces': widget.favoritePlaces,
+                    });
+                  } catch (e) {
+                    setState(() {
+                      _errorMessage = 'Error: ' + e.toString();
+                    });
+                  } finally {
+                    setState(() {
+                      _isLoading = false;
+                    });
+                  }
                 },
                 child: const Text(
                   "Let's start",
