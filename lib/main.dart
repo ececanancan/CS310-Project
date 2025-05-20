@@ -1,3 +1,4 @@
+import 'package:cs_projesi/pages/personalPage.dart';
 import 'package:flutter/material.dart';
 import 'package:cs_projesi/models/profile.dart';
 import 'package:cs_projesi/models/event.dart';
@@ -13,10 +14,19 @@ import 'package:cs_projesi/pages/SettingsPage.dart';
 import 'package:cs_projesi/pages/sign_in_page.dart';
 import 'package:cs_projesi/pages/sign_up_page.dart';
 import 'package:cs_projesi/pages/mapPage.dart';
-import 'package:cs_projesi/pages/personalPage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cs_projesi/firebase/firebase_service.dart';
 import 'firebase_options.dart';
+
+Future<void> ensureDummyDataUploaded() async {
+  final firebaseService = FirebaseService();
+  try {
+    await firebaseService.uploadDummyData();
+    print('Dummy data uploaded successfully');
+  } catch (e) {
+    print('Error uploading dummy data: $e');
+  }
+}
 
 void main() async {
   try {
@@ -24,20 +34,10 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    
-    // Upload dummy data
-    final firebaseService = FirebaseService();
-    try {
-      await firebaseService.uploadDummyData();
-      print('Dummy data uploaded successfully');
-    } catch (e) {
-      print('Error uploading dummy data: $e');
-      // Continue with app launch even if dummy data upload fails
-    }
+    await ensureDummyDataUploaded();
   } catch (e) {
     print('Error initializing Firebase: $e');
   }
-  
   runApp(const MyApp());
 }
 
@@ -62,10 +62,8 @@ class MyApp extends StatelessWidget {
             EventPage(event: ModalRoute.of(context)!.settings.arguments as Event),
         '/SettingsPage': (context) => const SettingsPage(),
         '/MapPage': (context) => const MapPage(),
-        '/QuestionMarkPage': (context) => const QuestionMarkPage(),
-
         '/PersonalPage': (context) => const PersonalPage(),
-
+        '/QuestionMarkPage': (context) => const QuestionMarkPage(),
         '/ProfilePage': (context) {
           final args = ModalRoute.of(context)!.settings.arguments;
           if (args is Map && args['profile'] is Profile) {

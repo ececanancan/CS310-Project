@@ -59,7 +59,6 @@ class _HomePageState extends State<HomePage> {
                           icon: Icon(Icons.arrow_back)),
                       Padding(
                         padding: EdgeInsets.only(right: 2),
-
                         child: Text(
                           userName != null && userName!.isNotEmpty ? "Hi, $userName" : "Hi",
                           overflow: TextOverflow.clip,
@@ -69,7 +68,6 @@ class _HomePageState extends State<HomePage> {
                             color: Colors.black45,
                           ),
                         ),
-
                       ),
                     ],
                   ),
@@ -113,7 +111,7 @@ class _HomePageState extends State<HomePage> {
                       stream: _firebaseService.getEvents(),
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
-                          return Center(child: Text('Error: ${snapshot.error}'));
+                          return Center(child: Text('Error: \\${snapshot.error}'));
                         }
 
                         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -124,10 +122,22 @@ class _HomePageState extends State<HomePage> {
                           return Center(child: Text('No events found'));
                         }
 
-                        return ListView.builder(
-                          itemCount: snapshot.data!.length,
-                          itemBuilder: (context, index) {
-                            return EventCardWidget(event: snapshot.data![index]);
+                        return FutureBuilder<List<Event>>(
+                          future: _filterEventsWithProfileHasEvent(snapshot.data!),
+                          builder: (context, filteredSnapshot) {
+                            if (!filteredSnapshot.hasData) {
+                              return Center(child: CircularProgressIndicator());
+                            }
+                            final filteredEvents = filteredSnapshot.data!;
+                            if (filteredEvents.isEmpty) {
+                              return Center(child: Text('No valid events found'));
+                            }
+                            return ListView.builder(
+                              itemCount: filteredEvents.length,
+                              itemBuilder: (context, index) {
+                                return EventCardWidget(event: filteredEvents[index]);
+                              },
+                            );
                           },
                         );
                       },
@@ -137,7 +147,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-
           Align(
             alignment: Alignment.topCenter,
             child: Padding(
@@ -149,12 +158,33 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           )
-
         ],
       ),
       bottomNavigationBar: NavigationBarNature(
         selectedIndex: _selectedIndex,
       ),
     );
+  }
+
+  Future<List<Event>> _filterEventsWithProfileHasEvent(List<Event> events) async {
+    List<Event> filtered = [];
+    for (final event in events) {
+      if (event.id.startsWith('map_')) continue; // skip map events
+      try {
+        final profile = await _firebaseService.getProfile(event.createdBy);
+        if (profile != null && profile.hasEvent == true) {
+          if (event.descriptionMini != null &&
+              event.eventPhotoPath != null &&
+              event.location != null &&
+              event.createdBy != null) {
+            filtered.add(event);
+          }
+        }
+      } catch (e) {
+        // skip problematic events
+        continue;
+      }
+    }
+    return filtered;
   }
 }
