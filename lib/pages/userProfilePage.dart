@@ -1,50 +1,72 @@
 import 'package:flutter/material.dart';
-import 'package:cs_projesi/models/profile.dart';
-import 'package:cs_projesi/utility_classes/app_colors.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cs_projesi/firebase/firebase_service.dart';
 
-class ProfilePage extends StatefulWidget {
-  final Profile user;
-  final bool isOwnProfile;
-
-  const ProfilePage({Key? key, required this.user, this.isOwnProfile = false}) : super(key: key);
+class UserProfilePage extends StatefulWidget {
+  final String uid;
+  const UserProfilePage({super.key, required this.uid});
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<UserProfilePage> createState() => _UserProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _UserProfilePageState extends State<UserProfilePage> {
   final FirebaseService _firebaseService = FirebaseService();
+  Map<String, dynamic>? _userData;
+  bool _loading = true;
   bool isFollowing = false;
   bool hasActiveActivity = false;
 
   @override
   void initState() {
     super.initState();
-    _loadFollowAndActivityStatus();
+    _loadProfile();
   }
 
-  Future<void> _loadFollowAndActivityStatus() async {
-    final following = await _firebaseService.isFollowing(widget.user.id);
-    final active = await _firebaseService.userHasActiveActivity(widget.user.id);
-    setState(() {
-      isFollowing = following;
-      hasActiveActivity = active;
-    });
+  Future<void> _loadProfile() async {
+    final doc = await FirebaseFirestore.instance.collection('users').doc(widget.uid).get();
+    final following = await _firebaseService.isFollowing(widget.uid);
+    final active = await _firebaseService.userHasActiveActivity(widget.uid);
+
+    if (mounted) {
+      setState(() {
+        _userData = doc.data();
+        isFollowing = following;
+        hasActiveActivity = active;
+        _loading = false;
+      });
+    }
   }
 
   Future<void> _toggleFollow() async {
     if (isFollowing) {
-      await _firebaseService.unfollowUser(widget.user.id);
+      await _firebaseService.unfollowUser(widget.uid);
     } else {
-      await _firebaseService.followUser(widget.user.id);
+      await _firebaseService.followUser(widget.uid);
     }
-    _loadFollowAndActivityStatus();
+    _loadProfile();
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = widget.user;
+    if (_loading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_userData == null) {
+      return const Scaffold(
+        body: Center(child: Text("User not found")),
+      );
+    }
+
+    final name = _userData!["name"] ?? "Unknown";
+    final age = _userData!["age"] ?? 0;
+    final bio = _userData!["bio"] ?? "";
+    final photo = _userData!["profilePhotoUrl"] ?? "";
+    final favoriteActivities = List<String>.from(_userData!["favoriteActivities"] ?? []);
+    final favoritePlaces = List<String>.from(_userData!["favoritePlaces"] ?? []);
 
     return Scaffold(
       appBar: AppBar(
@@ -58,7 +80,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   const Icon(Icons.circle, color: Colors.green, size: 12),
                 const SizedBox(width: 5),
                 Text(
-                  'Age: ${user.age}',
+                  'Age: $age',
                   style: const TextStyle(fontSize: 16, fontFamily: 'RobotoSerif'),
                 ),
               ],
@@ -77,15 +99,15 @@ class _ProfilePageState extends State<ProfilePage> {
             Center(
               child: CircleAvatar(
                 radius: 70,
-                backgroundImage: user.profilePhotoPath.startsWith('http')
-                    ? NetworkImage(user.profilePhotoPath)
-                    : AssetImage(user.profilePhotoPath) as ImageProvider,
+                backgroundImage: photo.isNotEmpty
+                    ? NetworkImage(photo)
+                    : const AssetImage('assets/default_avatar.png') as ImageProvider,
               ),
             ),
             const SizedBox(height: 16),
             Center(
               child: Text(
-                user.name,
+                name,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 22,
@@ -94,44 +116,43 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             const SizedBox(height: 16),
-            if (user.bio.isNotEmpty)
+            if (bio.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Text(
-                  user.bio,
+                  bio,
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 16, fontFamily: 'RobotoSerif'),
                 ),
               ),
             const SizedBox(height: 24),
-            if (user.favoriteActivities.isNotEmpty)
-              _buildListSection('Favorite Activities', user.favoriteActivities),
-            if (user.favoritePlaces.isNotEmpty)
-              _buildListSection('Favorite Places', user.favoritePlaces),
+            if (favoriteActivities.isNotEmpty)
+              _buildListSection('Favorite Activities', favoriteActivities),
+            if (favoritePlaces.isNotEmpty)
+              _buildListSection('Favorite Places', favoritePlaces),
             const SizedBox(height: 30),
-            if (!widget.isOwnProfile)
-              Center(
-                child: OutlinedButton(
-                  onPressed: _toggleFollow,
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(
-                      color: isFollowing ? AppColors.red : AppColors.green,
-                      width: 3,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(300),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 40),
+            Center(
+              child: OutlinedButton(
+                onPressed: _toggleFollow,
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(
+                    color: isFollowing ? Colors.red : Colors.green,
+                    width: 3,
                   ),
-                  child: Text(
-                    isFollowing ? 'Unfollow' : 'Follow',
-                    style: TextStyle(
-                      color: isFollowing ? AppColors.red : AppColors.green,
-                      fontFamily: 'RobotoSerif',
-                    ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(300),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                ),
+                child: Text(
+                  isFollowing ? 'Unfollow' : 'Follow',
+                  style: TextStyle(
+                    color: isFollowing ? Colors.red : Colors.green,
+                    fontFamily: 'RobotoSerif',
                   ),
                 ),
               ),
+            ),
           ],
         ),
       ),

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cs_projesi/firebase/firebase_service.dart';
-import 'package:cs_projesi/models/profile.dart';
 
 class NavigationBarNature extends StatelessWidget {
   final int selectedIndex;
@@ -21,26 +19,8 @@ class NavigationBarNature extends StatelessWidget {
 
   void _onItemTapped(BuildContext context, int index) async {
     if (index == 1) {
-      // Profile button tapped
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        final profile = await FirebaseService().getProfile(user.uid);
-        if (profile != null) {
-          Navigator.pushNamed(
-            context,
-            '/ProfilePage',
-            arguments: {'profile': profile, 'isOwnProfile': true},
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Profile not found.')),
-          );
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('User not signed in.')),
-        );
-      }
+      // Navigate to PersonalPage directly without needing Firebase data
+      Navigator.pushNamed(context, '/PersonalPage');
     } else {
       Navigator.pushNamed(context, _routes[index]);
     }
@@ -60,7 +40,7 @@ class NavigationBarNature extends StatelessWidget {
             onTap: (index) => _onItemTapped(context, index),
             selectedItemColor: Colors.black54,
             unselectedItemColor: Colors.black54,
-            backgroundColor: Color(0xFF67C933),
+            backgroundColor: const Color(0xFF67C933),
             showSelectedLabels: false,
             showUnselectedLabels: false,
             selectedFontSize: 0,

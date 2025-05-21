@@ -6,6 +6,7 @@ import 'package:cs_projesi/pages/contactUsPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'editProfileSettingsPage.dart';
+import 'fllowingsListPage.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -76,7 +77,9 @@ class SettingsPage extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         children: [
           _buildTile(MdiIcons.accountMultiple, 'Followings', () {
-            // Navigate to followings
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const FollowingsListPage()),
+            );
           }),
         _buildTile(MdiIcons.accountEdit, 'Edit Profile', () {
           Navigator.of(context).push(

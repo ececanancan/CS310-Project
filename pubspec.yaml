@@ -34,7 +34,6 @@ dependencies:
   flutter:
     sdk: flutter
   material_design_icons_flutter: ^7.0.7296
-  dependencies:
   path: ^1.8.3
 
 
@@ -77,6 +76,9 @@ flutter:
   assets:
     - assets/nature_photos/
     - assets/profile_photos/
+    - assets/placeholder.jpg
+
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

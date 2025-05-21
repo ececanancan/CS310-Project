@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage> {
                       stream: _firebaseService.getEvents(),
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
-                          return Center(child: Text('Error: \\${snapshot.error}'));
+                          return Center(child: Text('Error: ${snapshot.error}'));
                         }
 
                         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -123,15 +123,17 @@ class _HomePageState extends State<HomePage> {
                         }
 
                         return FutureBuilder<List<Event>>(
-                          future: _filterEventsWithProfileHasEvent(snapshot.data!),
+                          future: _getFollowedUserEvents(snapshot.data!),
                           builder: (context, filteredSnapshot) {
                             if (!filteredSnapshot.hasData) {
                               return Center(child: CircularProgressIndicator());
                             }
+
                             final filteredEvents = filteredSnapshot.data!;
                             if (filteredEvents.isEmpty) {
-                              return Center(child: Text('No valid events found'));
+                              return Center(child: Text('No followed users have shared events'));
                             }
+
                             return ListView.builder(
                               itemCount: filteredEvents.length,
                               itemBuilder: (context, index) {
@@ -143,21 +145,11 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                   ),
+
                 ],
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.topCenter,
-            child: Padding(
-              padding: EdgeInsets.only(top: 0.1),
-              child: IconButton(
-                onPressed: (){},
-                icon: Icon(Icons.notifications_none_sharp),
-                iconSize: 25,
-              ),
-            ),
-          )
         ],
       ),
       bottomNavigationBar: NavigationBarNature(
@@ -166,25 +158,12 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<List<Event>> _filterEventsWithProfileHasEvent(List<Event> events) async {
-    List<Event> filtered = [];
-    for (final event in events) {
-      if (event.id.startsWith('map_')) continue; // skip map events
-      try {
-        final profile = await _firebaseService.getProfile(event.createdBy);
-        if (profile != null && profile.hasEvent == true) {
-          if (event.descriptionMini != null &&
-              event.eventPhotoPath != null &&
-              event.location != null &&
-              event.createdBy != null) {
-            filtered.add(event);
-          }
-        }
-      } catch (e) {
-        // skip problematic events
-        continue;
-      }
-    }
-    return filtered;
+  Future<List<Event>> _getFollowedUserEvents(List<Event> allEvents) async {
+    final followedUserIds = await _firebaseService.getFollowedUserIds();
+    return allEvents
+        .where((event) => followedUserIds.contains(event.createdBy))
+        .toList();
   }
+
+
 }
