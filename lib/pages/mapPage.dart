@@ -1,4 +1,3 @@
-// ✅ Updated MapPage with consistent profile image logic
 import 'package:cs_projesi/pages/userProfilePage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
