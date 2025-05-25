@@ -68,6 +68,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
     final favoriteActivities = List<String>.from(_userData!["favoriteActivities"] ?? []);
     final favoritePlaces = List<String>.from(_userData!["favoritePlaces"] ?? []);
 
+    final ImageProvider imageProvider;
+    if (photo.isEmpty) {
+      imageProvider = const AssetImage('assets/default_avatar.png');
+    } else if (photo.startsWith('http')) {
+      imageProvider = NetworkImage(photo);
+    } else {
+      imageProvider = AssetImage(photo);
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: const BackButton(),
@@ -99,9 +108,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             Center(
               child: CircleAvatar(
                 radius: 70,
-                backgroundImage: photo.isNotEmpty
-                    ? NetworkImage(photo)
-                    : const AssetImage('assets/default_avatar.png') as ImageProvider,
+                backgroundImage: imageProvider,
               ),
             ),
             const SizedBox(height: 16),

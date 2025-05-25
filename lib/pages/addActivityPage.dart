@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cs_projesi/pages/mapSelectorPage.dart'; // Use this instead of MapPage
+import 'package:cs_projesi/pages/mapSelectorPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:latlong2/latlong.dart';
@@ -7,9 +7,8 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart' as path;
-
-
-
+import 'package:provider/provider.dart';
+import 'package:cs_projesi/providers/user_provider.dart';
 
 class AddActivityPage extends StatefulWidget {
   const AddActivityPage({Key? key}) : super(key: key);
@@ -25,11 +24,11 @@ class _AddActivityPageState extends State<AddActivityPage> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _explanationController = TextEditingController();
-  final _whenController = TextEditingController();
   final _whereController = TextEditingController();
   final _bringController = TextEditingController();
   final _goalController = TextEditingController();
 
+  DateTime? _whenDateTime;
   LatLng? _selectedLocation;
 
   void _navigateToMap() async {
@@ -44,56 +43,47 @@ class _AddActivityPageState extends State<AddActivityPage> {
     }
   }
 
-
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) return;
+      if (_whenDateTime == null || _selectedLocation == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Please select date/time and map location.")),
+        );
+        return;
+      }
 
-      // Ensure user document exists and doesn't overwrite existing data
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .set({
-        'uid': user.uid,
-        'email': user.email,
-        'name': user.displayName ?? '',
-        'profilePhotoUrl': user.photoURL ?? '',
-        'lastLogin': FieldValue.serverTimestamp(),
-      }, SetOptions(merge: true)); //  merges with existing fields like age, bio, etc.
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      final creatorId = userProvider.uid;
 
-      // Build event/activity data
+      if (creatorId == null) return;
+
       final newEventData = {
         'title': _titleController.text,
         'explanation': _explanationController.text,
-        'when': _whenController.text,
+        'when': "${_whenDateTime!.year}-${_whenDateTime!.month.toString().padLeft(2, '0')}-${_whenDateTime!.day.toString().padLeft(2, '0')} "
+            "${_whenDateTime!.hour.toString().padLeft(2, '0')}:${_whenDateTime!.minute.toString().padLeft(2, '0')}",
         'where': _whereController.text,
         'bring': _bringController.text,
         'goal': _goalController.text,
         'location': 'Selected on map',
-        'coordinates': _selectedLocation != null
-            ? GeoPoint(_selectedLocation!.latitude, _selectedLocation!.longitude)
-            : null,
+        'coordinates': GeoPoint(_selectedLocation!.latitude, _selectedLocation!.longitude),
         'eventPhotoPath': _uploadedImageUrl ?? '',
         'createdAt': Timestamp.now(),
-        'createdBy': user.uid,
+        'createdBy': creatorId,
         'descriptionMini': _titleController.text,
         'descriptionLarge': _explanationController.text,
         'date': Timestamp.now(),
       };
 
-      // Add activity under the user's personal document
       await FirebaseFirestore.instance
           .collection('users')
-          .doc(user.uid)
+          .doc(creatorId)
           .collection('your_activities')
           .add(newEventData);
 
-      // Add to global events collection too
       await FirebaseFirestore.instance
           .collection('events')
           .add(newEventData);
-
 
       Navigator.pop(context);
     }
@@ -123,8 +113,6 @@ class _AddActivityPageState extends State<AddActivityPage> {
       }
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -159,11 +147,46 @@ class _AddActivityPageState extends State<AddActivityPage> {
                   ),
                 ),
               ),
-
               _buildLabel("Explanations:"),
               _buildTextField(_explanationController, "Enter explanation"),
               _buildLabel("When:"),
-              _buildTextField(_whenController, "Enter date/time"),
+              ElevatedButton(
+                onPressed: () async {
+                  final pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime(2100),
+                  );
+
+                  if (pickedDate != null) {
+                    final pickedTime = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.now(),
+                    );
+
+                    if (pickedTime != null) {
+                      setState(() {
+                        _whenDateTime = DateTime(
+                          pickedDate.year,
+                          pickedDate.month,
+                          pickedDate.day,
+                          pickedTime.hour,
+                          pickedTime.minute,
+                        );
+                      });
+                    }
+                  }
+                },
+                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF67C933)),
+                child: Text(
+                  _whenDateTime == null
+                      ? "Select Date & Time"
+                      : "${_whenDateTime!.year}-${_whenDateTime!.month.toString().padLeft(2, '0')}-${_whenDateTime!.day.toString().padLeft(2, '0')} "
+                      "${_whenDateTime!.hour.toString().padLeft(2, '0')}:${_whenDateTime!.minute.toString().padLeft(2, '0')}",
+                  style: const TextStyle(color: Colors.black),
+                ),
+              ),
               _buildLabel("Where:"),
               _buildTextField(_whereController, "Enter location"),
               _buildLabel("What to Bring:"),

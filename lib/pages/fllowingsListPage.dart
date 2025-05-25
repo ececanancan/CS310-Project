@@ -14,6 +14,11 @@ class FollowingsListPage extends StatefulWidget {
 class _FollowingsListPageState extends State<FollowingsListPage> {
   final FirebaseService _firebaseService = FirebaseService();
 
+  Future<void> _unfollowUser(String userId) async {
+    await _firebaseService.unfollowUser(userId);
+    setState(() {}); // Refresh list after unfollow
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,45 +63,48 @@ class _FollowingsListPageState extends State<FollowingsListPage> {
                 itemBuilder: (context, index) {
                   final profile = followedProfiles[index];
 
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => ProfilePage(user: profile, isOwnProfile: false),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.green, width: 2),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Row(
-                        children: [
-                          CircleAvatar(
+                  return Container(
+                    margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.green, width: 2),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ProfilePage(user: profile, isOwnProfile: false),
+                              ),
+                            );
+                          },
+                          child: CircleAvatar(
                             backgroundImage: profile.profilePhotoPath.startsWith('http')
                                 ? NetworkImage(profile.profilePhotoPath)
                                 : AssetImage(profile.profilePhotoPath) as ImageProvider,
                           ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Text(
-                              profile.name,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            profile.name,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
                             ),
                           ),
-                          const Text(
-                            "Followed",
-                            style: TextStyle(color: Colors.grey),
+                        ),
+                        TextButton(
+                          onPressed: () => _unfollowUser(profile.id),
+                          child: const Text(
+                            "Unfollow",
+                            style: TextStyle(color: Colors.red),
                           ),
-                        ],
-                      ),
+                        )
+                      ],
                     ),
                   );
                 },

@@ -57,7 +57,8 @@ class EventCardWidget extends StatelessWidget {
 
                 final userData = snapshot.data!.data() as Map<String, dynamic>;
                 final userName = userData['name'] ?? 'Unknown';
-                final userPhoto = userData['profilePhotoUrl'] ?? '';
+                final profilePhoto = userData['profilePhotoUrl'] ?? '';
+                final photoPath = profilePhoto;
 
                 return Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -71,9 +72,9 @@ class EventCardWidget extends StatelessWidget {
                       },
                       child: CircleAvatar(
                         radius: 25,
-                        backgroundImage: userPhoto.isNotEmpty
-                            ? NetworkImage(userPhoto)
-                            : const AssetImage('assets/default_avatar.png') as ImageProvider,
+                        backgroundImage: photoPath.startsWith('http')
+                            ? NetworkImage(photoPath)
+                            : AssetImage(photoPath.isNotEmpty ? photoPath : 'assets/default_avatar.png') as ImageProvider,
                       ),
                     ),
                     const SizedBox(width: 8),

@@ -639,11 +639,11 @@ class _FinalProfileReadyScreenState extends State<FinalProfileReadyScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 ),
                 onPressed: _isLoading ? null : () async {
-                  Navigator.pushReplacementNamed(context, '/HomePage');
                   setState(() {
                     _isLoading = true;
                     _errorMessage = null;
                   });
+
                   try {
                     final uid = FirebaseAuth.instance.currentUser!.uid;
                     String? photoUrl;
@@ -656,6 +656,7 @@ class _FinalProfileReadyScreenState extends State<FinalProfileReadyScreen> {
                       await ref.putFile(widget.profileImageFile!);
                       photoUrl = await ref.getDownloadURL();
                     }
+
 
                     await FirebaseFirestore.instance.collection('users').doc(uid).set({
                       'uid': uid,
@@ -671,10 +672,11 @@ class _FinalProfileReadyScreenState extends State<FinalProfileReadyScreen> {
                       'createdAt': Timestamp.now(),
                     });
 
+                    // Save to `profiles` (optional)
                     await FirebaseFirestore.instance.collection('profiles').doc(uid).set({
                       'id': uid,
-                      'name': widget.name,
                       'surname': '',
+                      'name': widget.name,
                       'hasEvent': false,
                       'profilePhotoPath': photoUrl ?? '',
                       'createdBy': uid,
@@ -684,9 +686,12 @@ class _FinalProfileReadyScreenState extends State<FinalProfileReadyScreen> {
                       'favoriteActivities': widget.favoriteActivities,
                       'favoritePlaces': widget.favoritePlaces,
                     });
+
+
+                    Navigator.pushReplacementNamed(context, '/HomePage');
                   } catch (e) {
                     setState(() {
-                      _errorMessage = 'Error: ' + e.toString();
+                      _errorMessage = 'Error: $e';
                     });
                   } finally {
                     setState(() {
@@ -694,6 +699,7 @@ class _FinalProfileReadyScreenState extends State<FinalProfileReadyScreen> {
                     });
                   }
                 },
+
                 child: const Text(
                   "Let's start",
                   style: TextStyle(

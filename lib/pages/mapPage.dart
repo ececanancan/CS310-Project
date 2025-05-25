@@ -1,3 +1,4 @@
+// ✅ Updated MapPage with consistent profile image logic
 import 'package:cs_projesi/pages/userProfilePage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -8,9 +9,7 @@ import 'package:cs_projesi/widgets/navigationBarWidget.dart';
 import 'package:cs_projesi/pages/ProfilePage.dart';
 import 'package:cs_projesi/pages/eventPage.dart';
 import 'package:cs_projesi/models/event.dart';
-
 import 'package:cs_projesi/firebase/firebase_service.dart';
-
 import '../models/profile.dart';
 
 class MapPage extends StatelessWidget {
@@ -63,6 +62,16 @@ class MapPage extends StatelessWidget {
           coordinates = LatLng(0, 0);
         }
 
+        final whenStr = data['when'] ?? '';
+        DateTime? whenDateTime;
+        try {
+          whenDateTime = DateTime.parse(whenStr);
+        } catch (_) {
+          continue;
+        }
+
+        if (whenDateTime.isBefore(DateTime.now())) continue;
+
         events.add(Event(
           id: data['id'] ?? doc.id,
           createdBy: data['createdBy'] ?? userDoc.id,
@@ -75,7 +84,7 @@ class MapPage extends StatelessWidget {
           where: data['where'] ?? '',
           bring: data['bring'] ?? '',
           goal: data['goal'] ?? '',
-          when: data['when'] ?? '',
+          when: whenStr,
           createdAt: (data['createdAt'] as Timestamp).toDate(),
         ));
       }
@@ -86,8 +95,6 @@ class MapPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final FirebaseService _firebaseService = FirebaseService();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Map of Istanbul"),
@@ -130,6 +137,7 @@ class MapPage extends StatelessWidget {
 
                         final name = data?['name'] ?? 'Unknown';
                         final profilePhotoUrl = data?['profilePhotoUrl'] ?? '';
+                        final photoPath = profilePhotoUrl;
 
                         return Container(
                           decoration: BoxDecoration(
@@ -139,7 +147,6 @@ class MapPage extends StatelessWidget {
                           ),
                           child: Stack(
                             children: [
-                              // Background image
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(20),
                                 child: event.eventPhotoPath.isNotEmpty
@@ -156,8 +163,6 @@ class MapPage extends StatelessWidget {
                                   child: const Icon(Icons.image, size: 40, color: Colors.grey),
                                 ),
                               ),
-
-                              // Overlay tint
                               Container(
                                 width: 280,
                                 height: 180,
@@ -166,8 +171,6 @@ class MapPage extends StatelessWidget {
                                   color: Colors.black.withOpacity(0.25),
                                 ),
                               ),
-
-                              // Avatar and name
                               Positioned(
                                 top: 10,
                                 right: 10,
@@ -185,9 +188,9 @@ class MapPage extends StatelessWidget {
                                         backgroundColor: Colors.white,
                                         child: CircleAvatar(
                                           radius: 25,
-                                          backgroundImage: profilePhotoUrl.isNotEmpty
-                                              ? NetworkImage(profilePhotoUrl)
-                                              : const AssetImage('assets/default_avatar.png') as ImageProvider,
+                                          backgroundImage: photoPath.startsWith('http')
+                                              ? NetworkImage(photoPath)
+                                              : AssetImage(photoPath.isNotEmpty ? photoPath : 'assets/default_avatar.png') as ImageProvider,
                                         ),
                                       ),
                                     ),
@@ -204,8 +207,6 @@ class MapPage extends StatelessWidget {
                                   ],
                                 ),
                               ),
-
-                              // Description + More button
                               Positioned(
                                 bottom: 10,
                                 left: 10,
@@ -240,7 +241,6 @@ class MapPage extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-
                                   ],
                                 ),
                               ),
@@ -250,7 +250,6 @@ class MapPage extends StatelessWidget {
                       },
                     ),
                   );
-
                 }).toList(),
               ),
             ],

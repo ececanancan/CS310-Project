@@ -149,9 +149,9 @@ class _PersonalPageState extends State<PersonalPage> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                padding: const EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
                                 child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Text(
                                       event.formattedDate,
@@ -159,23 +159,18 @@ class _PersonalPageState extends State<PersonalPage> {
                                     ),
                                     const SizedBox(width: 8),
                                     Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              const Icon(Icons.location_on_outlined, color: Colors.black45, size: 16),
-                                              const SizedBox(width: 4),
-                                              Flexible(
-                                                child: Text(
-                                                  event.where.isNotEmpty ? event.where : event.location,
-                                                  style: const TextStyle(fontSize: 13, color: Colors.black45),
-                                                  textAlign: TextAlign.center,
-                                                  softWrap: true,
-                                                ),
-                                              ),
-                                            ],
+                                          const Icon(Icons.location_on_outlined, color: Colors.black45, size: 16),
+                                          const SizedBox(width: 4),
+                                          Flexible(
+                                            child: Text(
+                                              event.where.isNotEmpty ? event.where : event.location,
+                                              style: const TextStyle(fontSize: 13, color: Colors.black45),
+                                              textAlign: TextAlign.center,
+                                              softWrap: true,
+                                            ),
                                           ),
                                         ],
                                       ),

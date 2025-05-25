@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:cs_projesi/models/profile.dart';
 import 'package:cs_projesi/utility_classes/app_colors.dart';
 import 'package:cs_projesi/firebase/firebase_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
+import 'package:cs_projesi/providers/user_provider.dart';
 
 class ProfilePage extends StatefulWidget {
   final Profile user;
@@ -17,11 +20,13 @@ class _ProfilePageState extends State<ProfilePage> {
   final FirebaseService _firebaseService = FirebaseService();
   bool isFollowing = false;
   bool hasActiveActivity = false;
+  Profile? _mergedProfile;
 
   @override
   void initState() {
     super.initState();
     _loadFollowAndActivityStatus();
+    _loadMergedProfileData();
   }
 
   Future<void> _loadFollowAndActivityStatus() async {
@@ -31,6 +36,32 @@ class _ProfilePageState extends State<ProfilePage> {
       isFollowing = following;
       hasActiveActivity = active;
     });
+  }
+
+  Future<void> _loadMergedProfileData() async {
+    final profileDoc = await FirebaseFirestore.instance.collection('profiles').doc(widget.user.id).get();
+    final userDoc = await FirebaseFirestore.instance.collection('users').doc(widget.user.id).get();
+
+    if (profileDoc.exists && userDoc.exists) {
+      final profileData = profileDoc.data()!;
+      final userData = userDoc.data()!;
+
+      setState(() {
+        _mergedProfile = Profile(
+          id: profileData['id'],
+          name: profileData['name'],
+          surname: profileData['surname'],
+          hasEvent: profileData['hasEvent'],
+          profilePhotoPath: profileData['profilePhotoPath'],
+          createdBy: profileData['createdBy'],
+          createdAt: (profileData['createdAt'] as Timestamp).toDate(),
+          age: userData['age'] ?? 0,
+          bio: userData['bio'] ?? '',
+          favoriteActivities: List<String>.from(userData['favoriteActivities'] ?? []),
+          favoritePlaces: List<String>.from(userData['favoritePlaces'] ?? []),
+        );
+      });
+    }
   }
 
   Future<void> _toggleFollow() async {
@@ -44,7 +75,21 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final user = widget.user;
+    final userProvider = Provider.of<UserProvider>(context);
+    final user = _mergedProfile ?? widget.user;
+
+    final photoPath = widget.isOwnProfile && userProvider.profilePhoto != null && userProvider.profilePhoto!.isNotEmpty
+        ? userProvider.profilePhoto!
+        : user.profilePhotoPath;
+
+    final ImageProvider imageProvider;
+    if (photoPath.isEmpty) {
+      imageProvider = const AssetImage('assets/default_avatar.png');
+    } else if (photoPath.startsWith('http')) {
+      imageProvider = NetworkImage(photoPath);
+    } else {
+      imageProvider = AssetImage(photoPath);
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -77,9 +122,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Center(
               child: CircleAvatar(
                 radius: 70,
-                backgroundImage: user.profilePhotoPath.startsWith('http')
-                    ? NetworkImage(user.profilePhotoPath)
-                    : AssetImage(user.profilePhotoPath) as ImageProvider,
+                backgroundImage: imageProvider,
               ),
             ),
             const SizedBox(height: 16),
